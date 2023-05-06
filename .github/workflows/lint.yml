@@ -1,0 +1,32 @@
+name: Run clang-format Linter
+
+on:
+  push:
+    paths:
+      - "**.cpp"
+      - "**.h"
+      - "**.c"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Lint with clang-format
+      uses: DoozyX/clang-format-lint-action@v0.16.1
+      with:
+        source: '.'
+        exclude: './lib'
+        extensions: 'h,cpp,c'
+        clangFormatVersion: 16
+        inplace: True
+
+    - name: Commit changes
+      uses: EndBug/add-and-commit@v9
+      with:
+        message: '[Github Actions] Lint with clang-format'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
