@@ -1,100 +1,68 @@
+#include <ncurses.h>
+
 #include <iostream>
-#include <cstdlib>
-#include <unordered_map>
-#include <queue>
-#include <vector>
-#include <iomanip>
-#include "grid_location.h"
-#include "grid.h"
 
-template <class Graph>
-void draw_grid(const Graph &graph, std::unordered_map<GridLocation, double> *distances = nullptr,
-               std::unordered_map<GridLocation, GridLocation> *point_to = nullptr, std::vector<GridLocation> *path = nullptr,
-               GridLocation *start = nullptr, GridLocation *goal = nullptr) {
-    const int field_width = 3;
-    std::cout << std::string(field_width * graph.width, '_') << '\n';
-    for (int y = 0; y != graph.height; ++y) {
-        for (int x = 0; x != graph.width; ++x) {
-            GridLocation id{x, y};
-            if (graph.walls.find(id) != graph.walls.end()) {
-                std::cout << std::string(field_width, '#');
-            } else if (start && id == *start) {
-                std::cout << " A ";
-            } else if (goal && id == *goal) {
-                std::cout << " Z ";
-            } else if (path != nullptr && find(path->begin(), path->end(), id) != path->end()) {
-                std::cout << " @ ";
-            } else if (point_to != nullptr && point_to->count(id)) {
-                GridLocation next = (*point_to)[id];
-                if (next.x == x + 1) {
-                    std::cout << " > ";
-                } else if (next.x == x - 1) {
-                    std::cout << " < ";
-                } else if (next.y == y + 1) {
-                    std::cout << " v ";
-                } else if (next.y == y - 1) {
-                    std::cout << " ^ ";
-                } else {
-                    std::cout << " * ";
-                }
-            } else if (distances != nullptr && distances->count(id)) {
-                std::cout << ' ' << std::left << std::setw(field_width - 1) << (*distances)[id];
-            } else {
-                std::cout << " . ";
-            }
-        }
-        std::cout << '\n';
-    }
-    std::cout << std::string(field_width * graph.width, '~') << '\n';
+int main() {
+    initscr();                 /* Start curses mode 		  */
+    printw("Hello World !!!"); /* Print Hello World		  */
+    refresh();                 /* Print it on to the real screen */
+    getch();                   /* Wait for user input */
+    endwin();                  /* End curses mode		  */
+
+    return 0;
 }
 
-void add_rect(Grid &grid, int x1, int y1, int x2, int y2) {
-    for (int x = x1; x < x2; ++x) {
-        for (int y = y1; y < y2; ++y) {
-            grid.walls.insert(GridLocation{x, y});
-        }
-    }
-}
+// #include <windows.h>
 
-Grid make_diagram1() {
-    Grid grid(30, 15);
-    add_rect(grid, 3, 3, 5, 12);
-    add_rect(grid, 13, 4, 15, 15);
-    add_rect(grid, 21, 0, 23, 7);
-    add_rect(grid, 23, 5, 26, 7);
-    return grid;
-}
+// #include <cstdlib>
+// #include <iostream>
 
-template <typename Location, typename Graph>
-std::unordered_map<Location, Location> breadth_first_search(Graph graph, Location start, Location goal) {
-    std::queue<Location> frontier;
-    frontier.push(start);
+// #include "graph/grid.h"
+// #include "graph/maze_generator.h"
 
-    std::unordered_map<Location, Location> came_from;
-    came_from[start] = start;
+// int main(void) {
+//     int height = 11;
 
-    while (!frontier.empty()) {
-        Location current = frontier.front();
-        frontier.pop();
+//     Grid grid(41, height);
+//     std::vector<Grid::Location> history = MazeGenerator::generate(
+//         grid, Grid::Location{1, 1}, Grid::Location{40, 3});
 
-        if (current == goal) {
-            break;
-        }
+//     ShowCursor(false);
 
-        for (Location next : graph.neighbors(current)) {
-            if (came_from.find(next) == came_from.end()) {
-                frontier.push(next);
-                came_from[next] = current;
-            }
-        }
-    }
-    return came_from;
-}
+//     std::cout << "\033[?25l"
+//               << "Dijkstra algorithm:"
+//               << "\n";
 
-int main(void) {
+//     for (Grid::Location change : history) {
+//         grid.grid[change.y][change.x] = Grid::CellType::EMPTY;
 
-    Grid grid = make_diagram1();
-    GridLocation start{8, 7}, goal{17, 2};
-    auto parents = breadth_first_search(grid, start, goal);
-    draw_grid(grid, nullptr, &parents, nullptr, &start, &goal);
-}
+//         for (int i = 0; i < grid.height; i++) {
+//             for (int j = 0; j < grid.width; j++) {
+//                 std::cout << (grid.grid[i][j] == Grid::CellType::WALL
+//                                   ? "\033[8;47m##\033[0m"
+//                                   : "  ");
+//             }
+//             std::cout << "\n";
+//         }
+
+//         std::cout << "\n\n"
+//                   << "A* algorithm:"
+//                   << "\n";
+
+//         for (int i = 0; i < grid.height; i++) {
+//             for (int j = 0; j < grid.width; j++) {
+//                 std::cout << (grid.grid[i][j] == Grid::CellType::WALL
+//                                   ? "\033[8;47m##\033[0m"
+//                                   : "  ");
+//             }
+
+//             std::cout << "\n";
+//         }
+
+//         std::cout << std::endl << "\033[" << height * 2 + 4 << "F";
+//     }
+//     std::cout << "\033[" << height * 2 + 4 << "E";
+//     std::cout << "\033[?25h";
+
+//     return EXIT_SUCCESS;
+// }

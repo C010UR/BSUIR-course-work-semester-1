@@ -1,4 +1,6 @@
 {
+    "mesonbuild.configureOnOpen": true,
+    "C_Cpp.default.compileCommands": "build\\vscode_compile_commands.json",
     "files.associations": {
         "*.vue": "vue",
         "cctype": "cpp",
@@ -8,6 +10,7 @@
         "cstddef": "cpp",
         "cstdio": "cpp",
         "cstdlib": "cpp",
+        "ctime": "cpp",
         "cwchar": "cpp",
         "cwctype": "cpp",
         "array": "cpp",
@@ -23,6 +26,7 @@
         "set": "cpp",
         "string": "cpp",
         "unordered_map": "cpp",
+        "unordered_set": "cpp",
         "vector": "cpp",
         "exception": "cpp",
         "algorithm": "cpp",
@@ -39,6 +43,7 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "initializer_list": "cpp",
+        "iomanip": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
         "istream": "cpp",
@@ -51,6 +56,15 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "unordered_set": "cpp"
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "cstring": "cpp",
+        "ratio": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "shared_mutex": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     }
 }
