@@ -42,6 +42,9 @@ class Timer {
             std::chrono::duration_cast<std::chrono::microseconds>(
                 duration % std::chrono::milliseconds(1));
 
-        return std::to_string(minutes.count()) + "m " + std::to_string(seconds.count()) + "s " + std::to_string(milliseconds.count()) + "ms " + std::to_string(microseconds.count()) + "us ";
+        return std::to_string(minutes.count()) + "m " +
+               std::to_string(seconds.count()) + "s " +
+               std::to_string(milliseconds.count()) + "ms " +
+               std::to_string(microseconds.count()) + "us ";
     }
 };

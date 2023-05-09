@@ -1,3 +1,5 @@
+#include "renderer/renderer.h"
+
 #include <chrono>
 #include <optional>
 #include <ratio>
@@ -7,7 +9,6 @@
 #include <vector>
 
 #include "ncurses.h"
-#include "renderer/renderer.h"
 
 Renderer::~Renderer() {
     // destroy windows

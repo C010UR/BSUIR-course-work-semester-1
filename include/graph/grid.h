@@ -1,13 +1,13 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
 #include <functional>
 #include <istream>
 #include <ratio>
 #include <tuple>
 #include <unordered_set>
 #include <vector>
-#include <chrono>
 
 struct Location {
     int x;

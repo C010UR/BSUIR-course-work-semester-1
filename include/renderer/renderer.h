@@ -55,13 +55,13 @@ class Renderer {
 
    private:
     void fillWindow(WINDOW *window, int attributes, char ch);
-    void updateMazeCharacter(WINDOW *window, int attributes,Grid::Location location);
+    void updateMazeCharacter(WINDOW *window, int attributes,
+                             Grid::Location location);
     void clearWindow(WINDOW *window);
 
     void drawMazeStep(WINDOW *grid, WINDOW *status, int step,
-                            std::chrono::microseconds time,
-                            Grid::Location current,
-                            std::optional<Grid::Location> previous);
+                      std::chrono::microseconds time, Grid::Location current,
+                      std::optional<Grid::Location> previous);
     void drawPathStep(WINDOW *grid, WINDOW *status, int step, Grid::cost_t cost,
                       Grid::Location current,
                       std::optional<Grid::Location> previous);

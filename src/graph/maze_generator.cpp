@@ -1,7 +1,7 @@
+#include "graph/maze_generator.h"
+
 #include <chrono>
 #include <stdexcept>
-
-#include "graph/maze_generator.h"
 
 void MazeGenerator::generate(Grid &grid, Grid::Location start,
                              Grid::Location end,
