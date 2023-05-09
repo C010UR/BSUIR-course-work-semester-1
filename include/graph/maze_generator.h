@@ -3,11 +3,11 @@
 #include <graph/grid.h>
 
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <random>
 #include <stack>
 #include <vector>
-#include <chrono>
 
 class MazeGenerator {
    public:

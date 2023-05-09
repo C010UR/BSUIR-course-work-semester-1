@@ -3,16 +3,15 @@
 #include <ncurses.h>
 
 #include <algorithm>
-#include <string>
-#include <vector>
-#include <thread>
 #include <chrono>
+#include <string>
+#include <thread>
+#include <vector>
 
 #include "graph/grid.h"
 
 class Renderer {
    public:
-
     enum ColorPairs {
         TEXT,
         VALUE,
@@ -45,7 +44,7 @@ class Renderer {
     void destroyWindow(WINDOW *window);
     void drawMaze(std::vector<Grid::Location> path);
 
-private:
+   private:
     void fillWindow(WINDOW *window, int attributes, char ch);
     void updateCharacter(WINDOW *window, int attributes, char ch, int x, int y);
 };

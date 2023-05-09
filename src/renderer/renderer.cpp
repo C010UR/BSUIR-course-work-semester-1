@@ -1,3 +1,5 @@
+#include "renderer/renderer.h"
+
 #include <chrono>
 #include <stdexcept>
 #include <string>
@@ -5,7 +7,6 @@
 #include <vector>
 
 #include "ncurses.h"
-#include "renderer/renderer.h"
 
 Renderer::~Renderer() {
     destroyWindow(this->first_grid);
