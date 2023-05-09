@@ -3,14 +3,14 @@
 #include <graph/grid.h>
 
 #include <algorithm>
-#include <chrono>
 #include <iostream>
 #include <random>
 #include <stack>
 #include <vector>
+#include <chrono>
 
 class MazeGenerator {
    public:
-    static std::vector<Grid::Location> generate(Grid grid, Grid::Location start,
-                                                Grid::Location end);
+    static void generate(Grid &grid, Grid::Location start, Grid::Location end,
+                         std::vector<Grid::Location> &path);
 };

@@ -1,13 +1,23 @@
 #include <ncurses.h>
 
 #include <iostream>
+#include <vector>
+
+#include "graph/grid.h"
+#include "graph/maze_generator.h"
+#include "renderer/renderer.h"
 
 int main() {
-    initscr();                 /* Start curses mode 		  */
-    printw("Hello World !!!"); /* Print Hello World		  */
-    refresh();                 /* Print it on to the real screen */
-    getch();                   /* Wait for user input */
-    endwin();                  /* End curses mode		  */
+    Renderer renderer;
+
+    Grid grid(renderer.grid_width, renderer.grid_height);
+    std::vector<Grid::Location> maze_path;
+
+    MazeGenerator::generate(grid, {1, 1}, {grid.width - 1, grid.height - 2},
+                            maze_path);
+
+    renderer.drawMaze(maze_path);
+    getch(); /* Wait for user input */
 
     return 0;
 }

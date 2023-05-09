@@ -18,9 +18,10 @@ class Grid {
     typedef int cost_t;
     enum CellType { EMPTY, WALL };
 
+    static const std::array<Grid::Location, 4> DIRECTIONS;
+
     int width, height;
     std::vector<std::vector<Grid::CellType>> grid;
-    static const std::array<Grid::Location, 4> DIRECTIONS;
 
     Grid(int width, int height);
     inline bool in_bounds(Grid::Location location) const;

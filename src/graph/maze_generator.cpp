@@ -1,8 +1,8 @@
 #include "graph/maze_generator.h"
 
-std::vector<Grid::Location> MazeGenerator::generate(Grid grid,
-                                                    Grid::Location start,
-                                                    Grid::Location end) {
+void MazeGenerator::generate(Grid &grid, Grid::Location start,
+                             Grid::Location end,
+                             std::vector<Grid::Location> &path) {
     for (int i = 0; i < grid.height; i++) {
         std::fill(grid.grid[i].begin(), grid.grid[i].end(),
                   Grid::CellType::WALL);
@@ -22,7 +22,6 @@ std::vector<Grid::Location> MazeGenerator::generate(Grid grid,
 
     std::mt19937 gen(seed);
     std::stack<Grid::Location> cells;
-    std::vector<Grid::Location> history;
 
     cells.push(start);
 
@@ -30,8 +29,8 @@ std::vector<Grid::Location> MazeGenerator::generate(Grid grid,
     grid.grid[start.y][start.x] = Grid::CellType::EMPTY;
     grid.grid[end.y][end.x] = Grid::CellType::EMPTY;
 
-    history.push_back(start);
-    history.push_back(end);
+    path.push_back(start);
+    path.push_back(end);
 
     while (!cells.empty()) {
         Grid::Location current = cells.top();
@@ -54,10 +53,8 @@ std::vector<Grid::Location> MazeGenerator::generate(Grid grid,
                  [(random_neighbor.x + current.x) / 2] = Grid::CellType::EMPTY;
         grid.grid[random_neighbor.y][random_neighbor.x] = Grid::CellType::EMPTY;
 
-        history.push_back(Grid::Location{(random_neighbor.x + current.x) / 2,
-                                         (random_neighbor.y + current.y) / 2});
-        history.push_back(Grid::Location{random_neighbor.x, random_neighbor.y});
+        path.push_back(Grid::Location{(random_neighbor.x + current.x) / 2,
+                                      (random_neighbor.y + current.y) / 2});
+        path.push_back(Grid::Location{random_neighbor.x, random_neighbor.y});
     }
-
-    return history;
 }

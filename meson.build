@@ -11,8 +11,11 @@ incdir = include_directories('include')
 src = [
   'src/main.cpp',
   'src/graph/grid.cpp',
-  'src/graph/maze_generator.cpp'
+  'src/graph/maze_generator.cpp',
+  'src/renderer/renderer.cpp'
 ]
+
+curses = dependency('curses')
 
 compiler = meson.get_compiler('cpp')
 conf = configuration_data()
@@ -32,8 +35,6 @@ foreach h : check_headers
     conf.set(h.get(1), 1)
   endif
 endforeach
-
-curses = dependency('curses')
 
 exe = executable('program',
   sources : src,
