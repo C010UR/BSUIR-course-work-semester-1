@@ -1,6 +1,7 @@
-#include "graph/grid.h"
+#include "data_structure/grid.h"
 
 Grid::Grid(int width, int height) : width(width), height(height) {
+    // set entire grid to wall
     this->grid.reserve(std::max(0, height));
 
     for (int i = 0; i < height; i++) {
@@ -9,17 +10,12 @@ Grid::Grid(int width, int height) : width(width), height(height) {
     }
 }
 
-const std::array<Grid::Location, 4> Grid::DIRECTIONS = {
-    // East, West, North, South
-    Grid::Location{1, 0}, Grid::Location{-1, 0}, Grid::Location{0, -1},
-    Grid::Location{0, 1}};
-
-inline bool Grid::in_bounds(Grid::Location location) const {
+bool Grid::in_bounds(Grid::Location location) const {
     return 0 <= location.x && location.x < width && 0 <= location.y &&
            location.y < height;
 }
 
-inline bool Grid::passable(Grid::Location location) const {
+bool Grid::passable(Grid::Location location) const {
     return this->grid[location.y][location.x] == Grid::CellType::EMPTY;
 }
 
@@ -55,25 +51,31 @@ Grid::cost_t Grid::heuristic(Grid::Location a, Grid::Location b) {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
 }
 
-// Comparison operators
-bool operator==(Grid::Location a, Grid::Location b) {
-    return a.x == b.x && a.y == b.y;
+Grid::CellType &Grid::operator[](Grid::Location location) {
+    return this->grid[location.y][location.x];
 }
 
-bool operator!=(Grid::Location a, Grid::Location b) { return !(a == b); }
-
-bool operator<(Grid::Location a, Grid::Location b) {
-    return std::tie(a.x, a.y) < std::tie(b.x, b.y);
+// Location
+bool Grid::Location::operator==(const Grid::Location &other) const {
+    return this->x == other.x && this->y == other.y;
 }
 
-bool operator>(Grid::Location a, Grid::Location b) {
-    return std::tie(a.x, a.y) > std::tie(b.x, b.y);
+bool Grid::Location::operator!=(const Grid::Location &other) const {
+    return this->x != other.x || this->y != other.y;
 }
 
-// Stream operators
-std::basic_iostream<char>::basic_ostream &operator<<(
-    std::basic_iostream<char>::basic_ostream &out,
-    const Grid::Location &location) {
-    out << '(' << location.x << ", " << location.y << ')';
-    return out;
+bool Grid::Location::operator<(const Grid::Location &other) const {
+    if (this->x == other.x) {
+        return this->y < other.y;
+    } else {
+        return this->x < other.x;
+    }
+}
+
+bool Grid::Location::operator>(const Grid::Location &other) const {
+    if (this->x == other.x) {
+        return this->y > other.y;
+    } else {
+        return this->x > other.x;
+    }
 }

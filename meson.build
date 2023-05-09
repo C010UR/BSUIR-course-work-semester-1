@@ -10,8 +10,9 @@ incdir = include_directories('include')
 
 src = [
   'src/main.cpp',
-  'src/graph/grid.cpp',
-  'src/graph/maze_generator.cpp',
+  'src/data_structure/grid.cpp',
+  'src/algorithm/grid_maze_generator.cpp',
+  'src/renderer/grid_renderer.cpp',
   'src/renderer/renderer.cpp'
 ]
 

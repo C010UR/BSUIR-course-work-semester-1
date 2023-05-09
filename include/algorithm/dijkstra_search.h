@@ -10,13 +10,14 @@ class DijkstraSearch {
    private:
     typedef typename Graph::Location Location;
     typedef typename Graph::cost_t cost_t;
-    typedef typename Graph::Record Record;
+    typedef typename Graph::ChangeRecord ChangeRecord;
 
    public:
     static std::vector<Location> search(
         Graph &graph, Location start, Location goal,
-        std::vector<Record> &record,
+        std::vector<ChangeRecord> &record,
         std::unordered_map<Location, cost_t> &cost_so_far) {
+        // ---
         PriorityQueue<Location, cost_t> frontier;
         std::vector<Location> neighbors;
         std::unordered_map<Location, Location> came_from;
@@ -30,7 +31,7 @@ class DijkstraSearch {
         while (!frontier.empty()) {
             Location current = frontier.get();
             timer.tock();
-            record.push_back(Record{current, timer.duration()});
+            record.push_back({current, timer.duration()});
 
             if (current == goal) {
                 break;
@@ -68,6 +69,8 @@ class DijkstraSearch {
         }
 
         path.push_back(start);
+
+        // reconstructed path will start from end, so reverse
         std::reverse(path.begin(), path.end());
 
         return path;

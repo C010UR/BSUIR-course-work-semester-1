@@ -2,19 +2,16 @@
 
 #include <ncurses.h>
 
-#include <algorithm>
-#include <chrono>
-#include <optional>
+#include <cstdlib>
 #include <string>
-#include <thread>
 #include <vector>
 
-#include "graph/grid.h"
+#include "renderer/renderer.h"
 #include "utility/timer.h"
 
 class Renderer {
    public:
-    enum ColorPairs {
+    enum ColorType {
         TEXT,
         VALUE,
         WALL,
@@ -23,48 +20,71 @@ class Renderer {
         MAZE_TRAVERSED,
         PATHFINDER_CURRENT,
         PATHFINDER_TRAVERSED,
-        PATHFINDER_SEARCHED,
+        PATHFINDER_FINAL_TRAVERSED,
     };
 
-    static const int MIN_GRID_HEIGHT = 7;
-    static const int MIN_GRID_WIDTH = 41;
-    static const int WINDOW_SPACING = 1;
-    static const int MIN_STATUS_WIDTH = 38;
+    struct ColorPair {
+        Renderer::ColorType type;
+        int foreground;
+        int background;
+    };
 
-    WINDOW *first_grid;
-    WINDOW *second_grid;
-    WINDOW *first_grid_status;
-    WINDOW *second_grid_status;
+    struct CustomColor {
+        attr_t to_change;
+        short red;
+        short green;
+        short blue;
+    };
 
-    int grid_height;
-    int grid_width;
+    const std::vector<Renderer::ColorPair> color_pairs = {
+        {Renderer::ColorType::TEXT, COLOR_WHITE, COLOR_BLACK},
+        {Renderer::ColorType::VALUE, COLOR_YELLOW, COLOR_BLACK},
+        {Renderer::ColorType::EMPTY, COLOR_BLACK, COLOR_BLACK},
+        {Renderer::ColorType::MAZE_TRAVERSED, -1, -1},
+        {Renderer::ColorType::MAZE_CURRENT, COLOR_RED, COLOR_RED},
+        {Renderer::ColorType::WALL, COLOR_WHITE, COLOR_WHITE},
+        {Renderer::ColorType::PATHFINDER_CURRENT, COLOR_RED, COLOR_RED},
+        {Renderer::ColorType::PATHFINDER_TRAVERSED, COLOR_BLUE, COLOR_BLUE},
+        {Renderer::ColorType::PATHFINDER_FINAL_TRAVERSED, COLOR_GREEN,
+         COLOR_GREEN}};
+
+    const std::vector<Renderer::CustomColor> custom_colors = {
+        {COLOR_BLACK, 0, 0, 0},
+        {COLOR_RED, 235, 77, 75},
+        {COLOR_GREEN, 106, 176, 76},
+        {COLOR_YELLOW, 249, 202, 36},
+        {COLOR_BLUE, 48, 51, 107},
+        {COLOR_MAGENTA, 190, 46, 221},
+        {COLOR_CYAN, 34, 166, 179},
+        {COLOR_WHITE, 229, 229, 229}
+    };
+
+    const std::string size_error_msg =
+        "Terminal size is too small.\n\nEnlarge the terminal and restart the "
+        "program.";
+    const std::string color_error_msg = "Your terminal does not support colors.";
 
     ~Renderer();
     Renderer();
 
-    WINDOW *createWindow(int height, int width, int start_x, int start_y,
-                         std::string title = "");
-    void destroyWindow(WINDOW *window);
-    void drawMaze(std::vector<Grid::Record> path);
-    void drawPath(std::vector<Grid::Location> first_searched,
-                  std::unordered_map<Grid::Location, Grid::cost_t> first_cost,
-                  std::vector<Grid::Location> second_searched,
-                  std::unordered_map<Grid::Location, Grid::cost_t> second_cost);
-    void drawFinalPath(std::vector<Grid::Location> first,
-                       std::vector<Grid::Location> second);
+    void validateTerminalSize(int min_width, int min_height);
+    void validateAndStartColor();
 
-   private:
-    void fillWindow(WINDOW *window, int attributes, char ch);
-    void updateMazeCharacter(WINDOW *window, int attributes,
-                             Grid::Location location);
-    void clearWindow(WINDOW *window);
+    static WINDOW *createWindow(int height, int width, int start_x, int start_y,
+                                std::string title = "");
+    static void destroyWindow(WINDOW *window);
+    static void fillWindow(WINDOW *window, int attribute, char character);
+    static void clearWindow(WINDOW *window);
 
-    void drawMazeStep(WINDOW *grid, WINDOW *status, int step,
-                      std::chrono::microseconds time, Grid::Location current,
-                      std::optional<Grid::Location> previous);
-    void drawPathStep(WINDOW *grid, WINDOW *status, int step, Grid::cost_t cost,
-                      Grid::Location current,
-                      std::optional<Grid::Location> previous);
-    void drawFinalPathStep(WINDOW *grid, Grid::Location current,
-                           std::optional<Grid::Location> previous);
+    // default ncurses printw are uncomfortable, so create own
+    static void attrMoveWindowPrint(WINDOW *window, attr_t attribute, int x,
+                                    int y, std::string line);
+    static void attrMovePrint(attr_t attribute, int x, int y, std::string line);
+    static void attrWindowPrint(WINDOW *window, attr_t attribute,
+                                std::string line);
+    static void attrPrint(attr_t attribute, std::string line);
+    static void moveWindowPrint(WINDOW *window, int x, int y, std::string line);
+    static void movePrint(int x, int y, std::string line);
+    static void windowPrint(WINDOW *window, std::string line);
+    static void print(std::string line);
 };
