@@ -4,6 +4,8 @@
 
 This project shows the difference between 2 very popular path finding algorithms: __A* and Dijkstra__
 
+![gif](https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/f6473089-1819-4c97-b705-d776259dea7f)
+
 This project is built with
 <img src="https://mesonbuild.com/assets/images/meson_logo.png" height="16px">
 [Meson](https://mesonbuild.com/). To install meson you can visit their [GitHub page](https://github.com/mesonbuild/meson/tree/master/docs).
