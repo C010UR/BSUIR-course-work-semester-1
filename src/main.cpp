@@ -1,78 +1,43 @@
 #include <ncurses.h>
 
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 #include "graph/grid.h"
 #include "graph/maze_generator.h"
+#include "path_finder/a_star_search.h"
+#include "path_finder/dijkstra_search.h"
 #include "renderer/renderer.h"
 
 int main() {
     Renderer renderer;
 
     Grid grid(renderer.grid_width, renderer.grid_height);
-    std::vector<Grid::Location> maze_path;
 
-    MazeGenerator::generate(grid, {1, 1}, {grid.width - 1, grid.height - 2},
-                            maze_path);
+    Grid::Location start{1, 1};
+    Grid::Location end{grid.width - 1, grid.height - 2};
 
+    std::vector<Grid::Record> maze_path;
+    MazeGenerator::generate(grid, start, end, maze_path);
     renderer.drawMaze(maze_path);
-    getch(); /* Wait for user input */
+
+    std::vector<Grid::Record> dijkstra_searched;
+    std::unordered_map<Grid::Location, Grid::cost_t> dijkstra_cost;
+    std::vector<Grid::Location> dijkstra_path = DijkstraSearch<Grid>::search(
+        grid, start, end, dijkstra_searched, dijkstra_cost);
+
+    std::vector<Grid::Record> a_star_searched;
+    std::unordered_map<Grid::Location, Grid::cost_t> a_star_cost;
+    std::vector<Grid::Location> a_star_path = AStarSearch<Grid>::search(
+        grid, start, end, Grid::heuristic, a_star_searched, a_star_cost);
+
+    renderer.drawPath(dijkstra_searched, dijkstra_cost, a_star_searched,
+                      a_star_cost);
+
+    renderer.drawFinalPath(dijkstra_path, a_star_path);
+
+    getch();
 
     return 0;
 }
-
-// #include <windows.h>
-
-// #include <cstdlib>
-// #include <iostream>
-
-// #include "graph/grid.h"
-// #include "graph/maze_generator.h"
-
-// int main(void) {
-//     int height = 11;
-
-//     Grid grid(41, height);
-//     std::vector<Grid::Location> history = MazeGenerator::generate(
-//         grid, Grid::Location{1, 1}, Grid::Location{40, 3});
-
-//     ShowCursor(false);
-
-//     std::cout << "\033[?25l"
-//               << "Dijkstra algorithm:"
-//               << "\n";
-
-//     for (Grid::Location change : history) {
-//         grid.grid[change.y][change.x] = Grid::CellType::EMPTY;
-
-//         for (int i = 0; i < grid.height; i++) {
-//             for (int j = 0; j < grid.width; j++) {
-//                 std::cout << (grid.grid[i][j] == Grid::CellType::WALL
-//                                   ? "\033[8;47m##\033[0m"
-//                                   : "  ");
-//             }
-//             std::cout << "\n";
-//         }
-
-//         std::cout << "\n\n"
-//                   << "A* algorithm:"
-//                   << "\n";
-
-//         for (int i = 0; i < grid.height; i++) {
-//             for (int j = 0; j < grid.width; j++) {
-//                 std::cout << (grid.grid[i][j] == Grid::CellType::WALL
-//                                   ? "\033[8;47m##\033[0m"
-//                                   : "  ");
-//             }
-
-//             std::cout << "\n";
-//         }
-
-//         std::cout << std::endl << "\033[" << height * 2 + 4 << "F";
-//     }
-//     std::cout << "\033[" << height * 2 + 4 << "E";
-//     std::cout << "\033[?25h";
-
-//     return EXIT_SUCCESS;
-// }

@@ -9,8 +9,9 @@
 #include <stack>
 #include <vector>
 
+#include "utility/timer.h"
 class MazeGenerator {
    public:
     static void generate(Grid &grid, Grid::Location start, Grid::Location end,
-                         std::vector<Grid::Location> &path);
+                         std::vector<Grid::Record> &record);
 };

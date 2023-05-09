@@ -44,7 +44,7 @@ std::vector<Grid::Location> Grid::neighbors(Grid::Location location,
     return result;
 };
 
-inline Grid::cost_t Grid::cost(Grid::Location from_node,
+Grid::cost_t Grid::cost(Grid::Location from_node,
                                Grid::Location to_node) {
     // grid will not have different costs
     (void)from_node;
@@ -52,7 +52,7 @@ inline Grid::cost_t Grid::cost(Grid::Location from_node,
     return 1;
 }
 
-inline Grid::cost_t Grid::heuristic(Grid::Location a, Grid::Location b) {
+Grid::cost_t Grid::heuristic(Grid::Location a, Grid::Location b) {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
 }
 

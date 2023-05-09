@@ -3,33 +3,40 @@
 #include <vector>
 
 #include "data_structure/priority_queue.h"
+#include "utility/timer.h"
 
 template <typename Graph>
 class DijkstraSearch {
    private:
     typedef typename Graph::Location Location;
     typedef typename Graph::cost_t cost_t;
+    typedef typename Graph::Record Record;
 
    public:
-    std::vector<Location> search(
+    static std::vector<Location> search(
         Graph &graph, Location start, Location goal,
-        std::unordered_map<Location, Location> &came_from,
+        std::vector<Record> &record,
         std::unordered_map<Location, cost_t> &cost_so_far) {
         PriorityQueue<Location, cost_t> frontier;
         std::vector<Location> neighbors;
+        std::unordered_map<Location, Location> came_from;
         frontier.put(start, cost_t(0));
 
         came_from[start] = start;
         cost_so_far[start] = cost_t(0);
 
+        Timer timer;
+
         while (!frontier.empty()) {
             Location current = frontier.get();
+            timer.tock();
+            record.push_back(Record{current, timer.duration()});
 
             if (current == goal) {
                 break;
             }
 
-            graph.get_neighbors(current, neighbors);
+            neighbors = graph.neighbors(current);
             for (Location next : neighbors) {
                 cost_t new_cost =
                     cost_so_far[current] + graph.cost(current, next);
@@ -42,10 +49,10 @@ class DijkstraSearch {
             }
         }
 
-        return this->reconstruct_path(start, goal, came_from);
+        return DijkstraSearch::reconstruct_path(start, goal, came_from);
     };
 
-    std::vector<Location> reconstruct_path(
+    static std::vector<Location> reconstruct_path(
         Location start, Location goal,
         std::unordered_map<Location, Location> &came_from) {
         std::vector<Location> path;

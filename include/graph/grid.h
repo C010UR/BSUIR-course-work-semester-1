@@ -3,18 +3,26 @@
 #include <algorithm>
 #include <functional>
 #include <istream>
+#include <ratio>
 #include <tuple>
 #include <unordered_set>
 #include <vector>
+#include <chrono>
 
 struct Location {
     int x;
     int y;
 };
 
+struct Record {
+    Location location;
+    std::chrono::microseconds time;
+};
+
 class Grid {
    public:
     typedef Location Location;
+    typedef Record Record;
     typedef int cost_t;
     enum CellType { EMPTY, WALL };
 
@@ -30,8 +38,8 @@ class Grid {
                                           int distance = 0,
                                           bool passable = true) const;
 
-    inline static cost_t cost(Grid::Location from_node, Grid::Location to_node);
-    inline static Grid::cost_t heuristic(Grid::Location a, Grid::Location b);
+    static cost_t cost(Grid::Location from_node, Grid::Location to_node);
+    static Grid::cost_t heuristic(Grid::Location a, Grid::Location b);
 };
 
 namespace std {
