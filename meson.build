@@ -37,7 +37,7 @@ foreach h : check_headers
   endif
 endforeach
 
-exe = executable('program',
+exe = executable('pathfinder-comparison',
   sources : src,
   include_directories : incdir,
   install : true,
