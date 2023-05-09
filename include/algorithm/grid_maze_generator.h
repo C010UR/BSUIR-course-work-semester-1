@@ -1,10 +1,10 @@
 #pragma once
 
-#include "data_structure/grid.h"
-#include "utility/timer.h"
-
 #include <random>
 #include <stack>
+
+#include "data_structure/grid.h"
+#include "utility/timer.h"
 
 class GridMazeGenerator {
    public:

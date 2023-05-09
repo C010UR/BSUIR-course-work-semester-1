@@ -1,5 +1,6 @@
-#include "ncurses.h"
 #include "renderer/renderer.h"
+
+#include "ncurses.h"
 
 Renderer::~Renderer() { endwin(); }
 
@@ -84,22 +85,21 @@ void Renderer::clearWindow(WINDOW *window) {
 }
 
 // custom prints
-void Renderer::attrMoveWindowPrint(WINDOW *window, attr_t attribute,
-                                          int x, int y, std::string line) {
+void Renderer::attrMoveWindowPrint(WINDOW *window, attr_t attribute, int x,
+                                   int y, std::string line) {
     wattron(window, attribute);
     mvwprintw(window, y, x, "%s", line.c_str());
     wattroff(window, attribute);
 }
 
-void Renderer::attrMovePrint(attr_t attribute, int x, int y,
-                                    std::string line) {
+void Renderer::attrMovePrint(attr_t attribute, int x, int y, std::string line) {
     attron(attribute);
     mvprintw(y, x, "%s", line.c_str());
     attroff(attribute);
 }
 
 void Renderer::attrWindowPrint(WINDOW *window, attr_t attribute,
-                                      std::string line) {
+                               std::string line) {
     wattron(window, attribute);
     wprintw(window, "%s", line.c_str());
     wattroff(window, attribute);
@@ -111,8 +111,7 @@ void Renderer::attrPrint(attr_t attribute, std::string line) {
     attroff(attribute);
 }
 
-void Renderer::moveWindowPrint(WINDOW *window, int x, int y,
-                                      std::string line) {
+void Renderer::moveWindowPrint(WINDOW *window, int x, int y, std::string line) {
     mvwprintw(window, y, x, "%s", line.c_str());
 }
 

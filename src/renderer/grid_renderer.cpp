@@ -1,6 +1,6 @@
-#include <chrono>
-
 #include "renderer/grid_renderer.h"
+
+#include <chrono>
 
 GridRenderer::GridRenderer(std::vector<std::string> titles) : Renderer() {
     this->validateAndStartColor();

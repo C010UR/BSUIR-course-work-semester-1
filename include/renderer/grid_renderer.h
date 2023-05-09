@@ -55,18 +55,25 @@ class GridRenderer : Renderer {
     void updateMaze(bool is_end, GridRenderer::GridWindow window,
                     GridRenderer::Information information,
                     Grid::Location current,
-                    std::optional<Grid::Location> previous = std::optional<Grid::Location>());
+                    std::optional<Grid::Location> previous =
+                        std::optional<Grid::Location>());
 
     void updateTraversedPath(bool is_end, GridRenderer::GridWindow window,
-                            GridRenderer::Information information,
-                            Grid::Location current,
-                            std::optional<Grid::Location> previous = std::optional<Grid::Location>());
+                             GridRenderer::Information information,
+                             Grid::Location current,
+                             std::optional<Grid::Location> previous =
+                                 std::optional<Grid::Location>());
 
     void updateFinalPath(bool is_end, GridRenderer::GridWindow window,
                          GridRenderer::Information information,
                          Grid::Location current,
-                         std::optional<Grid::Location> previous = std::optional<Grid::Location>());
+                         std::optional<Grid::Location> previous =
+                             std::optional<Grid::Location>());
 
-    void mazeStatus(WINDOW *window, std::string top_text, GridRenderer::Information information, Grid::Location current);
-    void pathStatus(WINDOW *window, std::string top_text, GridRenderer::Information information, Grid::Location current);
+    void mazeStatus(WINDOW *window, std::string top_text,
+                    GridRenderer::Information information,
+                    Grid::Location current);
+    void pathStatus(WINDOW *window, std::string top_text,
+                    GridRenderer::Information information,
+                    Grid::Location current);
 };

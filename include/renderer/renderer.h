@@ -49,20 +49,16 @@ class Renderer {
          COLOR_GREEN}};
 
     const std::vector<Renderer::CustomColor> custom_colors = {
-        {COLOR_BLACK, 0, 0, 0},
-        {COLOR_RED, 235, 77, 75},
-        {COLOR_GREEN, 106, 176, 76},
-        {COLOR_YELLOW, 249, 202, 36},
-        {COLOR_BLUE, 48, 51, 107},
-        {COLOR_MAGENTA, 190, 46, 221},
-        {COLOR_CYAN, 34, 166, 179},
-        {COLOR_WHITE, 229, 229, 229}
-    };
+        {COLOR_BLACK, 0, 0, 0},      {COLOR_RED, 235, 77, 75},
+        {COLOR_GREEN, 106, 176, 76}, {COLOR_YELLOW, 249, 202, 36},
+        {COLOR_BLUE, 48, 51, 107},   {COLOR_MAGENTA, 190, 46, 221},
+        {COLOR_CYAN, 34, 166, 179},  {COLOR_WHITE, 229, 229, 229}};
 
     const std::string size_error_msg =
         "Terminal size is too small.\n\nEnlarge the terminal and restart the "
         "program.";
-    const std::string color_error_msg = "Your terminal does not support colors.";
+    const std::string color_error_msg =
+        "Your terminal does not support colors.";
 
     ~Renderer();
     Renderer();
