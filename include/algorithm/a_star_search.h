@@ -34,14 +34,14 @@ class AStarSearch {
         PriorityQueue<Location, cost_t> frontier;
         std::vector<Location> neighbors;
         std::unordered_map<Location, Location> came_from;
-        frontier.put(start, cost_t(0));
+        frontier.enqueue(start, cost_t(0));
 
         came_from[start] = start;
         cost_so_far[start] = cost_t(0);
         Timer timer;
 
         while (!frontier.isEmpty()) {
-            Location current = frontier.get();
+            Location current = frontier.dequeue();
             timer.tock();
             record.push_back(
                 {current, timer.duration(), 0, cost_so_far[current]});
@@ -58,7 +58,7 @@ class AStarSearch {
                     new_cost < cost_so_far[next]) {
                     cost_so_far[next] = new_cost;
                     cost_t priority = new_cost + heuristic(next, goal);
-                    frontier.put(next, priority);
+                    frontier.enqueue(next, priority);
                     came_from[next] = current;
                 }
             }

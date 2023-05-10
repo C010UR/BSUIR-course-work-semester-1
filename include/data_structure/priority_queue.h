@@ -1,5 +1,6 @@
 #pragma once
 
+#include <exception>
 #include <functional>
 #include <queue>
 #include <utility>
@@ -28,7 +29,7 @@ class PriorityQueue {
      * @param item
      * @param priority
      */
-    inline void put(T item, priority_t priority) {
+    inline void enqueue(T item, priority_t priority) {
         this->elements.emplace(priority, item);
     };
 
@@ -37,7 +38,7 @@ class PriorityQueue {
      *
      * @return T
      */
-    T get() {
+    T dequeue() {
         T best_item = this->elements.top().second;
         elements.pop();
         return best_item;

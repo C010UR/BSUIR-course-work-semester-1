@@ -32,7 +32,7 @@ class DijkstraSearch {
         PriorityQueue<Location, cost_t> frontier;
         std::vector<Location> neighbors;
         std::unordered_map<Location, Location> came_from;
-        frontier.put(start, cost_t(0));
+        frontier.enqueue(start, cost_t(0));
 
         came_from[start] = start;
         cost_so_far[start] = cost_t(0);
@@ -40,7 +40,7 @@ class DijkstraSearch {
         Timer timer;
 
         while (!frontier.isEmpty()) {
-            Location current = frontier.get();
+            Location current = frontier.dequeue();
             timer.tock();
             record.push_back(
                 {current, timer.duration(), 0, cost_so_far[current]});
@@ -57,7 +57,7 @@ class DijkstraSearch {
                     new_cost < cost_so_far[next]) {
                     cost_so_far[next] = new_cost;
                     came_from[next] = current;
-                    frontier.put(next, new_cost);
+                    frontier.enqueue(next, new_cost);
                 }
             }
         }
