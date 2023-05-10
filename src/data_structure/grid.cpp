@@ -38,7 +38,7 @@ std::vector<Grid::Location> Grid::neighbors(Grid::Location location,
     }
 
     return result;
-};
+}
 
 Grid::cost_t Grid::cost(Grid::Location from_node, Grid::Location to_node) {
     // grid will not have different costs
