@@ -1,6 +1,6 @@
-#include <string>
-
 #include "renderer/grid_renderer.h"
+
+#include <string>
 
 GridRenderer::GridRenderer(size_t windows_amount, unsigned traverse_delay,
                            unsigned step_delay)
