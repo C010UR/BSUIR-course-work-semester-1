@@ -68,32 +68,55 @@ class GridRenderer : Renderer {
     void drawMazes(const std::vector<Grid::ChangeRecord> &maze_record);
 
     /**
-     * @brief Draw pathfinder path traversal using `traversed` from path finder
-     * for a specified window
+     * @brief Draw pathfinder path traversal using `traversed` and `path`
+     * provided by path finder algorithms for a specified window
      *
-     * @param window
+     * @param is_parallel
+     * @param titles
      * @param traversed
-     * @return Grid::ChangeRecord used for `GridRenderer::drawFinalPath`
-     */
-    Grid::ChangeRecord drawTraversedPath(
-        GridRenderer::GridWindow window,
-        std::vector<Grid::ChangeRecord> &traversed);
-
-    /**
-     * @brief Draw solution to the maze using `path` from path finder for a
-     * specified window
-     *
-     * @param window
-     * @param information - can be acquired from
-     * `GridRenderer::drawTraversedPath`
      * @param path
      */
-    void drawFinalPath(GridRenderer::GridWindow window,
-                       Grid::ChangeRecord information,
-                       const std::vector<Grid::Location> &path);
+    void drawPath(bool is_parallel, std::vector<std::string> titles,
+                  std::vector<std::vector<Grid::ChangeRecord>> traversed,
+                  std::vector<std::vector<Grid::Location>> path);
 
    private:
     std::vector<GridWindow> windows;
+
+    /**
+     * @brief Draw pathfinder path traversal using `traversed` and `path`
+     * provided by path finder algorithms for a specified window
+     *
+     * @param window
+     * @param traversed
+     * @param path
+     */
+    void drawPath(GridRenderer::GridWindow window,
+                  std::vector<Grid::ChangeRecord> traversed,
+                  std::vector<Grid::Location> path);
+
+    /**
+     * @brief Draw path in parallel for each window
+     *
+     * @param titles
+     * @param traversed
+     * @param path
+     */
+    void drawPathParallel(
+        std::vector<GridRenderer::GridWindow> windows,
+        std::vector<std::vector<Grid::ChangeRecord>> traversed,
+        std::vector<std::vector<Grid::Location>> path);
+
+    /**
+     * @brief Draw path linear for each window
+     *
+     * @param titles
+     * @param traversed
+     * @param path
+     */
+    void drawPathLinear(std::vector<GridRenderer::GridWindow> windows,
+                        std::vector<std::vector<Grid::ChangeRecord>> traversed,
+                        std::vector<std::vector<Grid::Location>> path);
 
     /**
      * @brief Render a step in maze generation

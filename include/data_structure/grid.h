@@ -80,7 +80,7 @@ class Grid {
      */
     std::vector<Grid::Location> neighbors(Grid::Location location,
                                           int distance = 0,
-                                          bool passable = true) const;
+                                          bool is_passable = true) const;
 
     /**
      * @brief Return cost of moving from cell `from` to cell `to`

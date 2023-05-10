@@ -39,7 +39,7 @@ class DijkstraSearch {
 
         Timer timer;
 
-        while (!frontier.empty()) {
+        while (!frontier.isEmpty()) {
             Location current = frontier.get();
             timer.tock();
             record.push_back(

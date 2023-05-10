@@ -20,7 +20,7 @@ class PriorityQueue {
      * @return true
      * @return false
      */
-    inline bool empty() const { return this->elements.empty(); };
+    inline bool isEmpty() const { return this->elements.empty(); };
 
     /**
      * @brief Put `item` with `priority` into queue

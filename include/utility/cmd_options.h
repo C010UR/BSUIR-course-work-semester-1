@@ -11,7 +11,7 @@ class CmdOptions {
     struct Option {
         std::string short_cmd;
         std::string long_cmd;
-        bool has_value = false;
+        bool is_value_required = false;
         std::string description;
     };
 
@@ -57,5 +57,5 @@ class CmdOptions {
      * @param has_value
      * @return std::vector<std::string>::iterator
      */
-    std::vector<std::string>::iterator getOption(std::string option, bool has_value = false);
+    std::vector<std::string>::iterator getOption(std::string option, bool is_value_required = false);
 };

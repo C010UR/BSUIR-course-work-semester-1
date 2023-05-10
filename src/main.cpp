@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
         {"t", "traverse-delay", true,
          "Set path traverse step (in milliseconds)"},
         {"d", "step-delay", true, "Set step delay (in milliseconds)"},
-    };
+        {"p", "parallel", false, "Toggle path parallel draw"}};
 
     CmdOptions cmd(argc, argv);
 
@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
     }
 
     int traverse_delay = 40, step_delay = 1;
+    bool is_parallel = false;
 
     std::string option_value = cmd.getOptionValue(options[1]);
 
@@ -42,11 +43,13 @@ int main(int argc, char **argv) {
         step_delay = std::stoi(option_value);
     }
 
-    std::string dijkstra_title = "Dijkstra Algorithm";
-    std::string a_star_title = "A* Algorithm";
+    if (cmd.isOptionExists(options[3])) {
+        is_parallel = true;
+    }
 
-    GridRenderer renderer({dijkstra_title, a_star_title}, traverse_delay,
-                          step_delay);
+    std::vector<std::string> titles = {"Dijkstra Algorithm", "A* Algorithm"};
+
+    GridRenderer renderer(titles, traverse_delay, step_delay);
 
     Grid grid(renderer.grid_width, renderer.grid_height);
 
@@ -55,28 +58,18 @@ int main(int argc, char **argv) {
 
     std::vector<Grid::ChangeRecord> maze_record;
     GridMazeGenerator::generate(grid, start, end, maze_record);
+
+    std::vector<std::vector<Grid::ChangeRecord>> traversed(3);
+    std::vector<std::vector<Grid::Location>> path(3);
+
+    path[0] = DijkstraSearch<Grid>::search(grid, start, end, traversed[0]);
+    path[1] = AStarSearch<Grid>::search(grid, start, end, Grid::heuristic,
+                                        traversed[1]);
+
     renderer.drawMazes(maze_record);
     getch();
 
-    std::vector<Grid::ChangeRecord> dijkstra_traversed;
-    auto dijkstra_path =
-        DijkstraSearch<Grid>::search(grid, start, end, dijkstra_traversed);
-
-    GridRenderer::GridWindow dijkstra_window =
-        renderer.findWindow(dijkstra_title);
-    auto dijkstra_info =
-        renderer.drawTraversedPath(dijkstra_window, dijkstra_traversed);
-    renderer.drawFinalPath(dijkstra_window, dijkstra_info, dijkstra_path);
-
-    std::vector<Grid::ChangeRecord> a_star_traversed;
-    auto a_star_path = AStarSearch<Grid>::search(
-        grid, start, end, Grid::heuristic, a_star_traversed);
-
-    GridRenderer::GridWindow a_star_window = renderer.findWindow(a_star_title);
-    auto a_star_info =
-        renderer.drawTraversedPath(a_star_window, a_star_traversed);
-    renderer.drawFinalPath(a_star_window, a_star_info, a_star_path);
-
+    renderer.drawPath(is_parallel, titles, traversed, path);
     getch();
 
     return 0;

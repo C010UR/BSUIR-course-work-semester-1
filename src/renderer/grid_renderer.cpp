@@ -1,4 +1,5 @@
 #include <chrono>
+#include <vector>
 
 #include "renderer/grid_renderer.h"
 
@@ -115,9 +116,41 @@ void GridRenderer::updateMaze(bool is_end, GridRenderer::GridWindow window,
     }
 }
 
-Grid::ChangeRecord GridRenderer::drawTraversedPath(
-    const GridRenderer::GridWindow window,
-    std::vector<Grid::ChangeRecord> &traversed) {
+void GridRenderer::drawPath(
+    bool is_parallel, std::vector<std::string> titles,
+    std::vector<std::vector<Grid::ChangeRecord>> traversed,
+    std::vector<std::vector<Grid::Location>> path) {
+    // find all windows
+    std::vector<GridRenderer::GridWindow> windows;
+
+    for (std::string title : titles) {
+        windows.push_back(this->findWindow(title));
+    }
+
+    if (!is_parallel) {
+        for (int window = 0; window < (int)windows.size(); window++) {
+            this->drawPath(windows[window], traversed[window], path[window]);
+        }
+    } else {
+        std::vector<std::thread> threads;
+
+        for (int window = 0; window < (int)windows.size(); window++) {
+            threads.push_back(
+                std::thread([this, windows, traversed, path, window] {
+                    this->drawPath(windows[window], traversed[window],
+                                   path[window]);
+                }));
+        }
+
+        for (int thread = 0; thread < (int)threads.size(); thread++) {
+            threads[thread].join();
+        }
+    }
+}
+
+void GridRenderer::drawPath(GridRenderer::GridWindow window,
+                            std::vector<Grid::ChangeRecord> traversed,
+                            std::vector<Grid::Location> path) {
     for (int steps = 0; steps < (int)traversed.size(); steps++) {
         traversed[steps].step = steps;
 
@@ -129,12 +162,23 @@ Grid::ChangeRecord GridRenderer::drawTraversedPath(
         std::this_thread::sleep_for(
             std::chrono::milliseconds(this->traverse_delay));
     }
+    Grid::ChangeRecord result_info = traversed.back();
 
-    Grid::ChangeRecord result = traversed.back();
+    this->updateTraversedPath(true, window, result_info);
 
-    this->updateTraversedPath(true, window, result);
+    for (int steps = 0; steps < (int)path.size(); steps++) {
+        this->updateFinalPath(
+            false, window,
+            {path[steps], result_info.time_taken, result_info.step,
+             result_info.cost},
+            steps == 0 ? std::optional<Grid::Location>() : path[steps - 1]);
 
-    return result;
+        // create any delay make traversing smooth
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(this->step_delay));
+    }
+
+    this->updateFinalPath(true, window, result_info, path.back());
 }
 
 void GridRenderer::updateTraversedPath(bool is_end,
@@ -159,24 +203,6 @@ void GridRenderer::updateTraversedPath(bool is_end,
             COLOR_PAIR(GridRenderer::ColorType::PATHFINDER_TRAVERSED) | A_INVIS,
             previous.value());
     }
-}
-
-void GridRenderer::drawFinalPath(GridRenderer::GridWindow window,
-                                 Grid::ChangeRecord information,
-                                 const std::vector<Grid::Location> &path) {
-    for (int steps = 0; steps < (int)path.size(); steps++) {
-        this->updateFinalPath(
-            false, window,
-            {path[steps], information.time_taken, information.step,
-             information.cost},
-            steps == 0 ? std::optional<Grid::Location>() : path[steps - 1]);
-
-        // create any delay make traversing smooth
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(this->step_delay));
-    }
-
-    this->updateFinalPath(true, window, information, path.back());
 }
 
 void GridRenderer::updateFinalPath(bool is_end, GridRenderer::GridWindow window,

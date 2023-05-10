@@ -43,27 +43,27 @@ void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
         if (!current.short_cmd.empty()) {
             std::cout << color_blue << "-" << current.short_cmd << color_reset;
 
-            if (current.has_value) {
+            if (current.is_value_required) {
                 std::cout << color_yellow << " VALUE" << color_reset;
             }
 
             // Place comma if needed
 
             if (!current.long_cmd.empty()) {
-                std::cout << (current.has_value ? ", " : ",       ");
+                std::cout << (current.is_value_required ? ", " : ",       ");
             }
         }
 
         if (!current.long_cmd.empty()) {
             std::cout << color_blue << "--" << current.long_cmd << color_reset;
 
-            if (current.has_value) {
+            if (current.is_value_required) {
                 std::cout << color_yellow << " VALUE" << color_reset;
             }
         }
 
         std::cout << std::string(description_space - current.long_cmd.size() +
-                                     (current.has_value ? 0 : 6),
+                                     (current.is_value_required ? 0 : 6),
                                  ' ')
                   << " - " << current.description << std::endl;
     }
@@ -72,11 +72,11 @@ void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
 }
 
 std::vector<std::string>::iterator CmdOptions::getOption(std::string option,
-                                                         bool has_value) {
+                                                         bool is_value_required) {
     auto found =
         std::find(this->arguments.begin(), this->arguments.end(), option);
 
-    if (found == this->arguments.end() || !has_value ||
+    if (found == this->arguments.end() || !is_value_required ||
         found + 1 == this->arguments.end()) {
         return found;
     }
@@ -85,14 +85,14 @@ std::vector<std::string>::iterator CmdOptions::getOption(std::string option,
 }
 
 bool CmdOptions::isOptionExists(CmdOptions::Option option) {
-    return this->getOption("-" + option.short_cmd, option.has_value) !=
+    return this->getOption("-" + option.short_cmd, option.is_value_required) !=
                this->arguments.end() ||
-           this->getOption("--" + option.long_cmd, option.has_value) !=
+           this->getOption("--" + option.long_cmd, option.is_value_required) !=
                this->arguments.end();
 }
 
 std::string CmdOptions::getOptionValue(CmdOptions::Option option) {
-    if (!option.has_value || !this->isOptionExists(option)) {
+    if (!option.is_value_required || !this->isOptionExists(option)) {
         return "";
     }
 

@@ -20,14 +20,14 @@ bool Grid::isPassable(Grid::Location location) const {
 }
 
 std::vector<Grid::Location> Grid::neighbors(Grid::Location location,
-                                            int distance, bool passable) const {
+                                            int distance, bool is_passable) const {
     std::vector<Grid::Location> result;
 
     for (Grid::Location direction : this->DIRECTIONS) {
         Grid::Location next{
             location.x + direction.x + (distance * direction.x),
             location.y + direction.y + (distance * direction.y)};
-        if (this->isInBounds(next) && !(passable ^ this->isPassable(next))) {
+        if (this->isInBounds(next) && !(is_passable ^ this->isPassable(next))) {
             result.push_back(next);
         }
     }

@@ -40,7 +40,7 @@ class AStarSearch {
         cost_so_far[start] = cost_t(0);
         Timer timer;
 
-        while (!frontier.empty()) {
+        while (!frontier.isEmpty()) {
             Location current = frontier.get();
             timer.tock();
             record.push_back(
