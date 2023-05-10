@@ -1,30 +1,58 @@
 #include "renderer/grid_renderer.h"
 
-#include <chrono>
-#include <vector>
-
-GridRenderer::GridRenderer(std::vector<std::string> titles, int traverse_delay,
-                           int step_delay)
+GridRenderer::GridRenderer(size_t windows_amount, unsigned traverse_delay,
+                           unsigned step_delay)
     : Renderer() {
+    if (windows_amount == 0) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot initialize windows. Amount of "
+            "windows must be greater than 0.");
+    }
+
     this->validateColor();
 
-    int grid_windows = titles.size();
-
-    int window_height = LINES / grid_windows;
+    size_t window_height = LINES / windows_amount;
     window_height = window_height % 2 == 0 ? window_height - 1 : window_height;
 
-    int grid_width = COLS - this->MIN_STATUS_WIDTH;
+    size_t grid_width = COLS - this->MIN_STATUS_WIDTH;
     grid_width = grid_width % 2 == 0 ? grid_width - 1 : grid_width;
-
-    int status_width = COLS - grid_width;
-
-    int offset_y = window_height;
-    int offset_x = grid_width;
 
     this->grid_height = window_height - 2;  // don't count borders
     this->grid_width = grid_width - 2;
 
-    for (int i = 0; i < grid_windows; i++) {
+    this->windows_amount = windows_amount;
+    this->traverse_delay = traverse_delay;
+    this->step_delay = step_delay;
+}
+
+void GridRenderer::createWindows(const std::vector<std::string> &titles) {
+    size_t grid_windows = titles.size();
+
+    if (grid_windows == 0) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot initialize windows. Amount of "
+            "windows must be greater than 0.");
+    }
+
+    if (grid_windows != this->windows_amount) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot initialize windows. Size of "
+            "vector of titles is not equal to provided amount of windows to "
+            "create.");
+    }
+
+    size_t window_height = this->grid_height + 2;  // add borders
+    size_t grid_width = this->grid_width + 2;
+
+    size_t status_width = COLS - grid_width;
+
+    size_t offset_y = window_height;
+    size_t offset_x = grid_width;
+
+    this->grid_height = window_height - 2;  // don't count borders
+    this->grid_width = grid_width - 2;
+
+    for (size_t i = 0; i < grid_windows; i++) {
         GridRenderer::GridWindow window;
 
         window.title = titles[i];
@@ -36,13 +64,10 @@ GridRenderer::GridRenderer(std::vector<std::string> titles, int traverse_delay,
 
         this->windows.push_back(window);
     }
-
-    this->traverse_delay = traverse_delay;
-    this->step_delay = step_delay;
 }
 
-void GridRenderer::updateGridCell(WINDOW *window, attr_t attribute,
-                                  Grid::Location location) {
+void GridRenderer::updateGridCell(WINDOW *window, const attr_t attribute,
+                                  const Grid::Location &location) {
     wattron(window, attribute);
     mvwaddch(window, location.y + 1, location.x + 1, ' ');
     wattroff(window, attribute);
@@ -50,7 +75,7 @@ void GridRenderer::updateGridCell(WINDOW *window, attr_t attribute,
     wrefresh(window);
 }
 
-GridRenderer::GridWindow GridRenderer::findWindow(std::string name) {
+GridRenderer::GridWindow GridRenderer::findWindow(const std::string &name) {
     for (GridRenderer::GridWindow window : this->windows) {
         if (window.title == name) {
             return window;
@@ -62,6 +87,18 @@ GridRenderer::GridWindow GridRenderer::findWindow(std::string name) {
 
 void GridRenderer::drawMazes(
     const std::vector<Grid::ChangeRecord> &maze_record) {
+    if (this->windows.empty()) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot draw path traversal. No windows "
+            "to update.");
+    }
+
+    if (maze_record.empty()) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot draw mazes. Maze record is "
+            "empty.");
+    }
+
     // draw walls
     for (GridRenderer::GridWindow window : this->windows) {
         GridRenderer::fillWindow(
@@ -69,7 +106,7 @@ void GridRenderer::drawMazes(
             ' ');
     }
 
-    for (int steps = 0; steps < (int)maze_record.size(); steps++) {
+    for (size_t steps = 0; steps < maze_record.size(); steps++) {
         for (GridRenderer::GridWindow window : this->windows) {
             this->updateMaze(
                 false, window,
@@ -85,16 +122,16 @@ void GridRenderer::drawMazes(
     }
 
     for (GridRenderer::GridWindow window : this->windows) {
-        this->updateMaze(
-            true, window,
-            {maze_record.back().location, maze_record.back().time_taken,
-             (int)maze_record.size()});
+        this->updateMaze(true, window,
+                         {maze_record.back().location,
+                          maze_record.back().time_taken, maze_record.size()});
     }
 }
 
-void GridRenderer::updateMaze(bool is_end, GridRenderer::GridWindow window,
-                              Grid::ChangeRecord information,
-                              std::optional<Grid::Location> previous) {
+void GridRenderer::updateMaze(const bool is_end,
+                              const GridRenderer::GridWindow &window,
+                              const Grid::ChangeRecord &information,
+                              const std::optional<Grid::Location> &previous) {
     // status window
     this->mazeStatus(
         window.status,
@@ -117,9 +154,27 @@ void GridRenderer::updateMaze(bool is_end, GridRenderer::GridWindow window,
 }
 
 void GridRenderer::drawPath(
-    bool is_parallel, std::vector<std::string> titles,
-    std::vector<std::vector<Grid::ChangeRecord>> traversed,
-    std::vector<std::vector<Grid::Location>> path) {
+    const bool is_parallel, const std::vector<std::string> &titles,
+    const std::vector<std::vector<Grid::ChangeRecord>> &traversed,
+    const std::vector<std::vector<Grid::Location>> &path) {
+    if (titles.empty()) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot draw path traversal. No windows "
+            "to update.");
+    }
+
+    if (traversed.empty() || path.empty()) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot draw path traversal. Path "
+            "traversal record is empty.");
+    }
+
+    if (titles.size() != traversed.size() || titles.size() != path.size()) {
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot draw path traversal. Size of "
+            "windows and path traversal records are not equal.");
+    }
+
     // find all windows
     std::vector<GridRenderer::GridWindow> windows;
 
@@ -128,13 +183,13 @@ void GridRenderer::drawPath(
     }
 
     if (!is_parallel) {
-        for (int window = 0; window < (int)windows.size(); window++) {
+        for (size_t window = 0; window < windows.size(); window++) {
             this->drawPath(windows[window], traversed[window], path[window]);
         }
     } else {
         std::vector<std::thread> threads;
 
-        for (int window = 0; window < (int)windows.size(); window++) {
+        for (size_t window = 0; window < windows.size(); window++) {
             threads.push_back(
                 std::thread([this, windows, traversed, path, window] {
                     this->drawPath(windows[window], traversed[window],
@@ -142,19 +197,24 @@ void GridRenderer::drawPath(
                 }));
         }
 
-        for (int thread = 0; thread < (int)threads.size(); thread++) {
+        for (size_t thread = 0; thread < threads.size(); thread++) {
             threads[thread].join();
         }
     }
 }
 
-void GridRenderer::drawPath(GridRenderer::GridWindow window,
-                            std::vector<Grid::ChangeRecord> traversed,
-                            std::vector<Grid::Location> path) {
-    for (int steps = 0; steps < (int)traversed.size(); steps++) {
-        traversed[steps].step = steps;
+void GridRenderer::drawPath(const GridRenderer::GridWindow &window,
+                            const std::vector<Grid::ChangeRecord> &traversed,
+                            const std::vector<Grid::Location> &path) {
+    if (traversed.empty() || path.empty()) {
+        throw std::invalid_argument("Grid Renderer exception: Cannot draw path traversal. Path traversal record is empty.");
+    }
 
-        this->updateTraversedPath(false, window, traversed[steps],
+    for (size_t steps = 0; steps < traversed.size(); steps++) {
+        Grid::ChangeRecord current = traversed[steps];
+        current.step = steps;
+
+        this->updateTraversedPath(false, window, current,
                                   steps == 0 ? std::optional<Grid::Location>()
                                              : traversed[steps - 1].location);
 
@@ -166,8 +226,8 @@ void GridRenderer::drawPath(GridRenderer::GridWindow window,
 
     this->updateTraversedPath(true, window, result_info);
 
-    for (int steps = 0; steps < (int)path.size(); steps++) {
-        this->updateFinalPath(
+    for (size_t steps = 0; steps < path.size(); steps++) {
+        this->updateTraversedFinalPath(
             false, window,
             {path[steps], result_info.time_taken, result_info.step,
              result_info.cost},
@@ -178,13 +238,13 @@ void GridRenderer::drawPath(GridRenderer::GridWindow window,
             std::chrono::milliseconds(this->step_delay));
     }
 
-    this->updateFinalPath(true, window, result_info, path.back());
+    this->updateTraversedFinalPath(true, window, result_info, path.back());
 }
 
-void GridRenderer::updateTraversedPath(bool is_end,
-                                       GridRenderer::GridWindow window,
-                                       Grid::ChangeRecord information,
-                                       std::optional<Grid::Location> previous) {
+void GridRenderer::updateTraversedPath(
+    const bool is_end, const GridRenderer::GridWindow &window,
+    const Grid::ChangeRecord &information,
+    const std::optional<Grid::Location> &previous) {
     // status window
     this->pathStatus(window.status,
                      is_end ? "The path was found!" : "Finding the path...",
@@ -205,9 +265,10 @@ void GridRenderer::updateTraversedPath(bool is_end,
     }
 }
 
-void GridRenderer::updateFinalPath(bool is_end, GridRenderer::GridWindow window,
-                                   Grid::ChangeRecord information,
-                                   std::optional<Grid::Location> previous) {
+void GridRenderer::updateTraversedFinalPath(
+    const bool is_end, const GridRenderer::GridWindow &window,
+    const Grid::ChangeRecord &information,
+    const std::optional<Grid::Location> &previous) {
     // status window
     this->pathStatus(
         window.status,
@@ -231,8 +292,8 @@ void GridRenderer::updateFinalPath(bool is_end, GridRenderer::GridWindow window,
     }
 }
 
-void GridRenderer::mazeStatus(WINDOW *window, std::string top_text,
-                              Grid::ChangeRecord information) {
+void GridRenderer::mazeStatus(WINDOW *window, const std::string &top_text,
+                              const Grid::ChangeRecord &information) {
     // status window
     GridRenderer::clearWindow(window);
     GridRenderer::moveWindowPrint(window, 1, 1, top_text);
@@ -257,8 +318,8 @@ void GridRenderer::mazeStatus(WINDOW *window, std::string top_text,
     wrefresh(window);
 }
 
-void GridRenderer::pathStatus(WINDOW *window, std::string top_text,
-                              Grid::ChangeRecord information) {
+void GridRenderer::pathStatus(WINDOW *window, const std::string &top_text,
+                              const Grid::ChangeRecord &information) {
     // status window
     GridRenderer::clearWindow(window);
     GridRenderer::moveWindowPrint(window, 1, 1, top_text);

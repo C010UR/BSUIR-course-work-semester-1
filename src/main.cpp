@@ -1,76 +1,107 @@
 #include <ncurses.h>
+#include <stdlib.h>
 
-#include <iostream>
+#include <exception>
+#include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
-#include "algorithm/a_star_search.h"
-#include "algorithm/dijkstra_search.h"
 #include "algorithm/grid_maze_generator.h"
+#include "algorithm/pathfinder/a_star_search.h"
+#include "algorithm/pathfinder/breadth_first_search.h"
+#include "algorithm/pathfinder/dijkstra_search.h"
 #include "data_structure/grid.h"
 #include "renderer/grid_renderer.h"
-#include "utility/cmd_options.h"
+#include "utility/terminal.h"
 
 int main(int argc, char **argv) {
-    std::vector<CmdOptions::Option> options = {
-        {"h", "help", false, "Show this help message"},
-        {"t", "traverse-delay", true,
-         "Set path traverse step (in milliseconds)"},
-        {"d", "step-delay", true, "Set step delay (in milliseconds)"},
-        {"p", "parallel", false, "Toggle path parallel draw"}};
+    Terminal terminal(argc, argv);
 
-    CmdOptions cmd(argc, argv);
+    // global catch to edit exception error output
+    try {
+        unsigned traverse_delay, step_delay;
 
-    if (cmd.isOptionExists(options[0])) {
-        cmd.printHelp(options);
+        // options
+        traverse_delay = terminal.getOptionValue<unsigned>(
+            terminal.options[Terminal::Options::TRAVERSE_DELAY], 40);
+
+        step_delay = terminal.getOptionValue<unsigned>(
+            terminal.options[Terminal::Options::TRAVERSE_DELAY], 1);
+
+        bool is_parallel = false;
+
+        if (terminal.isOptionExists(
+                terminal.options[Terminal::Options::PARALLEL])) {
+            is_parallel = true;
+        }
+
+        int algorithms_amount =
+            terminal.isOptionExists(
+                terminal.options
+                    [Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM]) +
+            terminal.isOptionExists(
+                terminal.options[Terminal::Options::DIJKSTRA_ALGORITHM]) +
+            terminal.isOptionExists(
+                terminal.options[Terminal::Options::A_STAR_ALGORITHM]);
+
+        if (algorithms_amount == 0) {
+            throw std::invalid_argument(
+                "Argument exception: Cannot start program. Must include at "
+                "least one algorithm.");
+        }
+
+        GridRenderer renderer(algorithms_amount, traverse_delay, step_delay);
+        Grid grid(renderer.grid_width, renderer.grid_height);
+
+        Grid::Location start{1, 1};
+        Grid::Location end{(int)grid.width - 1, (int)grid.height - 2};
+
+        std::vector<Grid::ChangeRecord> maze_record;
+        GridMazeGenerator::generate(grid, start, end, maze_record);
+
+        std::vector<std::vector<Grid::ChangeRecord>> traversed(
+            algorithms_amount);
+        std::vector<std::vector<Grid::Location>> path(algorithms_amount);
+
+        // algorithms
+        std::vector<std::string> titles;
+
+        if (terminal.isOptionExists(
+                terminal.options
+                    [Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM])) {
+            titles.push_back("Breadth First Search Algorithm");
+            traversed.push_back(std::vector<Grid::ChangeRecord>());
+            path.push_back(BreadthFirstSearch<Grid>::search(grid, start, end,
+                                                            traversed.back()));
+        }
+
+        if (terminal.isOptionExists(
+                terminal.options[Terminal::Options::DIJKSTRA_ALGORITHM])) {
+            titles.push_back("Dijkstra Algorithm");
+            traversed.push_back(std::vector<Grid::ChangeRecord>());
+            path.push_back(DijkstraSearch<Grid>::search(grid, start, end,
+                                                        traversed.back()));
+        }
+
+        if (terminal.isOptionExists(
+                terminal.options[Terminal::Options::A_STAR_ALGORITHM])) {
+            titles.push_back("A* Algorithm");
+            traversed.push_back(std::vector<Grid::ChangeRecord>());
+            path.push_back(AStarSearch<Grid>::search(
+                grid, start, end, Grid::heuristic, traversed.back()));
+        }
+
+        renderer.createWindows(titles);
+
+        renderer.drawMazes(maze_record);
+        getch();
+
+        renderer.drawPath(is_parallel, titles, traversed, path);
+        getch();
+
+        return EXIT_SUCCESS;
+    } catch (const std::exception &e) {
+        terminal.error(e.what());
+        return EXIT_FAILURE;
     }
-
-    int traverse_delay = 40, step_delay = 1;
-    bool is_parallel = false;
-
-    std::string option_value = cmd.getOptionValue(options[1]);
-
-    if (!option_value.empty() &&
-        option_value.find_first_not_of("0123456789") == std::string::npos) {
-        traverse_delay = std::stoi(option_value);
-    }
-
-    option_value = cmd.getOptionValue(options[2]);
-
-    if (!option_value.empty() &&
-        option_value.find_first_not_of("0123456789") == std::string::npos) {
-        step_delay = std::stoi(option_value);
-    }
-
-    if (cmd.isOptionExists(options[3])) {
-        is_parallel = true;
-    }
-
-    std::vector<std::string> titles = {"Dijkstra Algorithm", "A* Algorithm"};
-
-    GridRenderer renderer(titles, traverse_delay, step_delay);
-
-    Grid grid(renderer.grid_width, renderer.grid_height);
-
-    Grid::Location start{1, 1};
-    Grid::Location end{grid.width - 1, grid.height - 2};
-
-    std::vector<Grid::ChangeRecord> maze_record;
-    GridMazeGenerator::generate(grid, start, end, maze_record);
-
-    std::vector<std::vector<Grid::ChangeRecord>> traversed(3);
-    std::vector<std::vector<Grid::Location>> path(3);
-
-    path[0] = DijkstraSearch<Grid>::search(grid, start, end, traversed[0]);
-    path[1] = AStarSearch<Grid>::search(grid, start, end, Grid::heuristic,
-                                        traversed[1]);
-
-    renderer.drawMazes(maze_record);
-    getch();
-
-    renderer.drawPath(is_parallel, titles, traversed, path);
-    getch();
-
-    return 0;
 }

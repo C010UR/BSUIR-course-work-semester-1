@@ -11,7 +11,7 @@
 class Grid {
    public:
     /** Type of cost of the cell */
-    typedef int cost_t;
+    typedef unsigned cost_t;
 
     /** Position of each cell in a grid */
     class Location {
@@ -28,18 +28,15 @@ class Grid {
     struct ChangeRecord {
         Grid::Location location;
         std::chrono::microseconds time_taken;
-        int step = 0;  // used by GridRenderer
+        size_t step = 0;  // used by GridRenderer
         Grid::cost_t cost = 0;
     };
 
     enum CellType { EMPTY, WALL };
 
-    const std::array<Grid::Location, 4> DIRECTIONS = {
-        // East, West, North, South
-        Grid::Location{1, 0}, Grid::Location{-1, 0}, Grid::Location{0, -1},
-        Grid::Location{0, 1}};
+    static const std::array<Grid::Location, 4> directions;
 
-    int width, height;
+    size_t width, height;
     std::vector<std::vector<Grid::CellType>> grid;
 
     /**
@@ -49,7 +46,7 @@ class Grid {
      * @param width
      * @param height
      */
-    Grid(int width, int height);
+    Grid(const size_t width, const size_t height);
 
     /**
      * @brief Check if `location` is in bounds
@@ -58,7 +55,7 @@ class Grid {
      * @return true
      * @return false
      */
-    bool isInBounds(Grid::Location location) const;
+    bool isInBounds(const Grid::Location &location) const;
 
     /**
      * @brief Check if `location` is passable
@@ -67,7 +64,7 @@ class Grid {
      * @return true
      * @return false
      */
-    bool isPassable(Grid::Location location) const;
+    bool isPassable(const Grid::Location &location) const;
 
     /**
      * @brief Find all passable (or not passable) neighbors within a given
@@ -78,9 +75,9 @@ class Grid {
      * @param passable
      * @return std::vector<Grid::Location>
      */
-    std::vector<Grid::Location> neighbors(Grid::Location location,
-                                          int distance = 0,
-                                          bool is_passable = true) const;
+    std::vector<Grid::Location> neighbors(const Grid::Location &location,
+                                          const unsigned distance = 0,
+                                          const bool is_passable = true) const;
 
     /**
      * @brief Return cost of moving from cell `from` to cell `to`
@@ -89,7 +86,7 @@ class Grid {
      * @param to
      * @return cost_t
      */
-    static cost_t cost(Grid::Location from, Grid::Location to);
+    static cost_t cost(const Grid::Location &from, const Grid::Location &to);
 
     /**
      * @brief Calculate a distance between locations `from` and `to`
@@ -98,9 +95,10 @@ class Grid {
      * @param to
      * @return Grid::cost_t
      */
-    static Grid::cost_t heuristic(Grid::Location from, Grid::Location to);
+    static Grid::cost_t heuristic(const Grid::Location &from,
+                                  const Grid::Location &to);
 
-    Grid::CellType &operator[](Grid::Location location);
+    Grid::CellType &operator[](const Grid::Location &location);
 };
 
 namespace std {
@@ -108,7 +106,7 @@ namespace std {
 template <>
 struct hash<Grid::Location> {
     std::size_t operator()(const Grid::Location &location) const noexcept {
-        return std::hash<int>()(location.x ^ (location.y << 16));
+        return std::hash<size_t>()(location.x ^ (location.y << 16));
     }
 };
 

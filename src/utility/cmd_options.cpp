@@ -1,12 +1,24 @@
-#include "utility/cmd_options.h"
+#include "utility/terminal.h"
 
-#include <ostream>
+const std::vector<Terminal::Option> Terminal::options = {
+    {"h", "help", false, "Show this help message"},
+    {"t", "traverse-delay", true, "Set path traverse step (in milliseconds)"},
+    {"d", "step-delay", true, "Set step delay (in milliseconds)"},
+    {"p", "parallel", false, "Toggle path parallel draw"},
+    {"", "breadth-first-search", false,
+     "Include Breadth First Search Algorithm to comparison"},
+    {"", "dijkstra", false, "Include Dijkstra Search Algorithm to comparison"},
+    {"", "a-star", false, "Include A* Search Algorithm to comparison"}};
 
-CmdOptions::CmdOptions(int argc, char **argv) {
+Terminal::Terminal(int argc, char **argv) {
     this->arguments = std::vector<std::string>(argv, argv + argc);
+
+    if (this->isOptionExists(this->options[Terminal::Options::HELP])) {
+        this->help(this->options);
+    }
 }
 
-void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
+void Terminal::help(std::vector<Terminal::Option> options) {
     // don't use ncurses
     std::string color_reset = "\033[0m";
     std::string color_red = "\033[31m";
@@ -37,7 +49,7 @@ void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
 
     std::cout << "Options: " << std::endl;
 
-    for (int i = 0; i < (int)options.size(); i++) {
+    for (size_t i = 0; i < options.size(); i++) {
         auto current = options[i];
 
         std::cout << "\t";
@@ -73,7 +85,12 @@ void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
     exit(EXIT_SUCCESS);
 }
 
-std::vector<std::string>::iterator CmdOptions::getOption(
+void Terminal::error(std::string error) {
+
+    std::cout << "\033[31m" << error << "\033[0m" << std::endl;
+}
+
+std::vector<std::string>::iterator Terminal::getOption(
     std::string option, bool is_value_required) {
     auto found =
         std::find(this->arguments.begin(), this->arguments.end(), option);
@@ -86,29 +103,9 @@ std::vector<std::string>::iterator CmdOptions::getOption(
     return found;
 }
 
-bool CmdOptions::isOptionExists(CmdOptions::Option option) {
+bool Terminal::isOptionExists(Terminal::Option option) {
     return this->getOption("-" + option.short_cmd, option.is_value_required) !=
                this->arguments.end() ||
            this->getOption("--" + option.long_cmd, option.is_value_required) !=
                this->arguments.end();
-}
-
-std::string CmdOptions::getOptionValue(CmdOptions::Option option) {
-    if (!option.is_value_required || !this->isOptionExists(option)) {
-        return "";
-    }
-
-    auto value = this->getOption("-" + option.short_cmd, true);
-
-    if (value != this->arguments.end()) {
-        return *(value + 1);
-    }
-
-    value = this->getOption("--" + option.long_cmd, true);
-
-    if (value != this->arguments.end()) {
-        return *(value + 1);
-    }
-
-    return "";
 }

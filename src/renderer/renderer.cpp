@@ -1,6 +1,17 @@
+#include "ncurses.h"
 #include "renderer/renderer.h"
 
-#include "ncurses.h"
+const std::vector<Renderer::ColorPair> Renderer::color_pairs = {
+    {Renderer::ColorType::TEXT, COLOR_WHITE, COLOR_BLACK},
+    {Renderer::ColorType::VALUE, COLOR_YELLOW, COLOR_BLACK},
+    {Renderer::ColorType::EMPTY, COLOR_BLACK, COLOR_BLACK},
+    {Renderer::ColorType::MAZE_TRAVERSED, -1, -1},
+    {Renderer::ColorType::MAZE_CURRENT, COLOR_RED, COLOR_RED},
+    {Renderer::ColorType::WALL, COLOR_WHITE, COLOR_WHITE},
+    {Renderer::ColorType::PATHFINDER_CURRENT, COLOR_RED, COLOR_RED},
+    {Renderer::ColorType::PATHFINDER_TRAVERSED, COLOR_BLUE, COLOR_BLUE},
+    {Renderer::ColorType::PATHFINDER_FINAL_TRAVERSED, COLOR_GREEN,
+     COLOR_GREEN}};
 
 Renderer::~Renderer() { endwin(); }
 
@@ -12,25 +23,21 @@ Renderer::Renderer() {
     keypad(stdscr, true);
 }
 
-void Renderer::validateTerminalSize(int min_width, int min_height) {
-    if (LINES < min_height && COLS < min_width) {
-        printw("%s", this->size_error_msg.c_str());
-
-        refresh();
-        getch();
-
-        exit(EXIT_FAILURE);
+void Renderer::validateTerminalResolution(const size_t min_width,
+                                          const size_t min_height) {
+    if ((size_t)LINES < min_height && (size_t)COLS < min_width) {
+        throw std::invalid_argument(
+            "Terminal error: Cannot start program. Terminal resolution is too "
+            "small. Minimum terminal resolution is " +
+            std::to_string(min_width) + "x" + std::to_string(min_height) + ".");
     }
 }
 
 void Renderer::validateColor() {
     if (!has_colors()) {
-        printw("%s", this->color_error_msg.c_str());
-
-        refresh();
-        getch();
-
-        exit(EXIT_FAILURE);
+        throw std::invalid_argument(
+            "Terminal error: Cannot start program. Terminal does not support "
+            "colored output.");
     }
 
     start_color();
@@ -41,8 +48,9 @@ void Renderer::validateColor() {
     }
 }
 
-WINDOW *Renderer::createWindow(int height, int width, int start_x, int start_y,
-                               std::string title) {
+WINDOW *Renderer::createWindow(const size_t height, const size_t width,
+                               const size_t start_x, const size_t start_y,
+                               const std::string &title) {
     WINDOW *window = subwin(stdscr, height, width, start_y, start_x);
 
     box(window, 0, 0);
@@ -60,15 +68,16 @@ void Renderer::destroyWindow(WINDOW *window) {
     delwin(window);
 }
 
-void Renderer::fillWindow(WINDOW *window, int attribute, char character) {
+void Renderer::fillWindow(WINDOW *window, const int attribute,
+                          const char character) {
     wattron(window, attribute);
 
-    int rows, cols;
+    size_t rows, cols;
     getmaxyx(window, rows, cols);
 
     std::string line(cols - 2, character);
 
-    for (int i = 1; i <= rows - 2; i++) {
+    for (size_t i = 1; i <= rows - 2; i++) {
         Renderer::moveWindowPrint(window, 1, i, line);
     }
 
@@ -81,20 +90,22 @@ void Renderer::clearWindow(WINDOW *window) {
 }
 
 // custom prints
-void Renderer::attrMoveWindowPrint(WINDOW *window, attr_t attribute, int x,
-                                   int y, std::string line) {
+void Renderer::attrMoveWindowPrint(WINDOW *window, const attr_t attribute,
+                                   const size_t x, const size_t y,
+                                   const std::string &line) {
     wattron(window, attribute);
     mvwprintw(window, y, x, "%s", line.c_str());
     wattroff(window, attribute);
 }
 
-void Renderer::attrWindowPrint(WINDOW *window, attr_t attribute,
-                               std::string line) {
+void Renderer::attrWindowPrint(WINDOW *window, const attr_t attribute,
+                               const std::string &line) {
     wattron(window, attribute);
     wprintw(window, "%s", line.c_str());
     wattroff(window, attribute);
 }
 
-void Renderer::moveWindowPrint(WINDOW *window, int x, int y, std::string line) {
+void Renderer::moveWindowPrint(WINDOW *window, const size_t x, const size_t y,
+                               const std::string &line) {
     mvwprintw(window, y, x, "%s", line.c_str());
 }

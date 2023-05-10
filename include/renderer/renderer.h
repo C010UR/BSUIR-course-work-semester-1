@@ -3,6 +3,7 @@
 #include <ncurses.h>
 
 #include <cstdlib>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -11,8 +12,7 @@
 
 class Renderer {
    public:
-    /** Available color types (initialized by `Renderer::validateAndStartColor`)
-     */
+    /** Color types (initialized by `Renderer::validateAndStartColor`) */
     enum ColorType {
         TEXT,
         VALUE,
@@ -24,30 +24,14 @@ class Renderer {
         PATHFINDER_TRAVERSED,
         PATHFINDER_FINAL_TRAVERSED,
     };
+
     struct ColorPair {
         Renderer::ColorType type;
         int foreground;
         int background;
     };
 
-    const std::vector<Renderer::ColorPair> color_pairs = {
-        {Renderer::ColorType::TEXT, COLOR_WHITE, COLOR_BLACK},
-        {Renderer::ColorType::VALUE, COLOR_YELLOW, COLOR_BLACK},
-        {Renderer::ColorType::EMPTY, COLOR_BLACK, COLOR_BLACK},
-        {Renderer::ColorType::MAZE_TRAVERSED, -1, -1},
-        {Renderer::ColorType::MAZE_CURRENT, COLOR_RED, COLOR_RED},
-        {Renderer::ColorType::WALL, COLOR_WHITE, COLOR_WHITE},
-        {Renderer::ColorType::PATHFINDER_CURRENT, COLOR_RED, COLOR_RED},
-        {Renderer::ColorType::PATHFINDER_TRAVERSED, COLOR_BLUE, COLOR_BLUE},
-        {Renderer::ColorType::PATHFINDER_FINAL_TRAVERSED, COLOR_GREEN,
-         COLOR_GREEN}};
-
-    // error messages;
-    const std::string size_error_msg =
-        "Terminal size is too small.\n\nEnlarge the terminal and restart the "
-        "program.";
-    const std::string color_error_msg =
-        "Your terminal does not support colors.";
+    static const std::vector<Renderer::ColorPair> color_pairs;
 
     /**
      * @brief Destroy the Renderer object and end `ncurses` mode
@@ -67,7 +51,7 @@ class Renderer {
      * @param min_width
      * @param min_height
      */
-    void validateTerminalSize(int min_width, int min_height);
+    void validateTerminalResolution(const size_t min_width, const size_t min_height);
 
     /**
      * @brief Validate if terminal supports colors and starts `ncurses` color
@@ -86,8 +70,9 @@ class Renderer {
      * @param title
      * @return WINDOW*
      */
-    static WINDOW *createWindow(int height, int width, int start_x, int start_y,
-                                std::string title = "");
+    static WINDOW *createWindow(const size_t height, const size_t width,
+                                const size_t start_x, const size_t start_y,
+                                const std::string &title = "");
 
     /**
      * @brief Destroy `ncurses` windows and clears window on the screen
@@ -103,7 +88,8 @@ class Renderer {
      * @param attribute
      * @param character
      */
-    static void fillWindow(WINDOW *window, int attribute, char character);
+    static void fillWindow(WINDOW *window, const int attribute,
+                           const char character);
 
     /**
      * @brief Clear window excluding borders
@@ -122,8 +108,9 @@ class Renderer {
      * @param y
      * @param line
      */
-    static void attrMoveWindowPrint(WINDOW *window, attr_t attribute, int x,
-                                    int y, std::string line);
+    static void attrMoveWindowPrint(WINDOW *window, const attr_t attribute,
+                                    const size_t x, const size_t y,
+                                    const std::string &line);
 
     /**
      * @brief Print `line` with `attribute` in a window
@@ -132,8 +119,8 @@ class Renderer {
      * @param attribute
      * @param line
      */
-    static void attrWindowPrint(WINDOW *window, attr_t attribute,
-                                std::string line);
+    static void attrWindowPrint(WINDOW *window, const attr_t attribute,
+                                const std::string &line);
 
     /**
      * @brief Move cursor and print `line` in a window
@@ -143,5 +130,6 @@ class Renderer {
      * @param y
      * @param line
      */
-    static void moveWindowPrint(WINDOW *window, int x, int y, std::string line);
+    static void moveWindowPrint(WINDOW *window, const size_t x, const size_t y,
+                                const std::string &line);
 };

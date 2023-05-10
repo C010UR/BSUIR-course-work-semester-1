@@ -1,13 +1,35 @@
 #include "algorithm/grid_maze_generator.h"
 
-void GridMazeGenerator::generate(Grid &grid, Grid::Location start,
-                                 Grid::Location goal,
+void GridMazeGenerator::generate(Grid &grid, const Grid::Location &start,
+                                 const Grid::Location &goal,
                                  std::vector<Grid::ChangeRecord> &record) {
-    // set entire grid to wall
-    for (int i = 0; i < grid.height; i++) {
+    if (grid.height <= GridMazeGenerator::min_height ||
+        grid.width <= GridMazeGenerator::min_width) {
+        throw std::invalid_argument(
+            "Grid Maze Generator exception: Cannot generate maze. Provided "
+            "grid is too small to generate a maze.\nMinimum grid size "
+            "is " +
+            std::to_string(GridMazeGenerator::min_width) + "x" +
+            std::to_string(GridMazeGenerator::min_height) + ", grid of size " +
+            std::to_string(grid.width) + "x" + std::to_string(grid.height) +
+            " was provided.");
+    }
+
+    if (!grid.isInBounds(start) || !grid.isInBounds(goal)) {
+        throw std::invalid_argument(
+            "Grid Maze Generator exception: Cannot generate maze. Provided "
+            "start and/or goal are invalid.\nStart: " +
+            std::to_string(start) + "; Goal: " + std::to_string(goal) +
+            "; Grid Size is " + std::to_string(grid.width) + "x" +
+            std::to_string(grid.height) + ".");
+    }
+
+    for (size_t i = 0; i < grid.height; i++) {
         std::fill(grid.grid[i].begin(), grid.grid[i].end(),
                   Grid::CellType::WALL);
     }
+
+    record.clear();
 
     // random setup
     std::random_device rd;
@@ -25,13 +47,13 @@ void GridMazeGenerator::generate(Grid &grid, Grid::Location start,
     std::mt19937 gen(seed);
 
     grid[start] = Grid::CellType::EMPTY;
+    record.push_back({start, std::chrono::microseconds(0)});
+
     grid[goal] = Grid::CellType::EMPTY;
+    record.push_back({goal, std::chrono::microseconds(0)});
 
     std::stack<Grid::Location> to_visit;
     to_visit.push(start);
-
-    record.push_back({start, std::chrono::microseconds(0)});
-    record.push_back({goal, std::chrono::microseconds(0)});
 
     Timer timer;
 
@@ -46,7 +68,7 @@ void GridMazeGenerator::generate(Grid &grid, Grid::Location start,
             continue;
         }
 
-        std::uniform_int_distribution<int> dist(0, neighbors.size() - 1);
+        std::uniform_int_distribution<size_t> dist(0, neighbors.size() - 1);
         Grid::Location random_neighbor = neighbors[dist(gen)];
 
         to_visit.push(current);
