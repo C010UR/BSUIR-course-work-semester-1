@@ -41,6 +41,8 @@ To see help message, add `-h` or `--help` flag
 ./pathfinder-comparison.exe -h
 ```
 
+![image](https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/d30b5d72-d7fa-4761-b7a9-56b878947ab8)
+
 To run a program you need to specify at least one of provided pathfinder algorithms (They are marked `[PATHFINDER]` in options list).
 Example command
 
