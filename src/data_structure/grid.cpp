@@ -10,12 +10,12 @@ Grid::Grid(int width, int height) : width(width), height(height) {
     }
 }
 
-bool Grid::in_bounds(Grid::Location location) const {
+bool Grid::isInBounds(Grid::Location location) const {
     return 0 <= location.x && location.x < width && 0 <= location.y &&
            location.y < height;
 }
 
-bool Grid::passable(Grid::Location location) const {
+bool Grid::isPassable(Grid::Location location) const {
     return this->grid[location.y][location.x] == Grid::CellType::EMPTY;
 }
 
@@ -27,7 +27,7 @@ std::vector<Grid::Location> Grid::neighbors(Grid::Location location,
         Grid::Location next{
             location.x + direction.x + (distance * direction.x),
             location.y + direction.y + (distance * direction.y)};
-        if (this->in_bounds(next) && !(passable ^ this->passable(next))) {
+        if (this->isInBounds(next) && !(passable ^ this->isPassable(next))) {
             result.push_back(next);
         }
     }
@@ -40,15 +40,15 @@ std::vector<Grid::Location> Grid::neighbors(Grid::Location location,
     return result;
 }
 
-Grid::cost_t Grid::cost(Grid::Location from_node, Grid::Location to_node) {
+Grid::cost_t Grid::cost(Grid::Location from, Grid::Location to) {
     // grid will not have different costs
-    (void)from_node;
-    (void)to_node;
+    (void)from;
+    (void)to;
     return 1;
 }
 
-Grid::cost_t Grid::heuristic(Grid::Location a, Grid::Location b) {
-    return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+Grid::cost_t Grid::heuristic(Grid::Location from, Grid::Location to) {
+    return std::abs(from.x - to.x) + std::abs(from.y - to.y);
 }
 
 Grid::CellType &Grid::operator[](Grid::Location location) {
@@ -69,13 +69,5 @@ bool Grid::Location::operator<(const Grid::Location &other) const {
         return this->y < other.y;
     } else {
         return this->x < other.x;
-    }
-}
-
-bool Grid::Location::operator>(const Grid::Location &other) const {
-    if (this->x == other.x) {
-        return this->y > other.y;
-    } else {
-        return this->x > other.x;
     }
 }

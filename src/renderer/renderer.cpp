@@ -1,6 +1,5 @@
-#include "renderer/renderer.h"
-
 #include "ncurses.h"
+#include "renderer/renderer.h"
 
 Renderer::~Renderer() { endwin(); }
 
@@ -23,7 +22,7 @@ void Renderer::validateTerminalSize(int min_width, int min_height) {
     }
 }
 
-void Renderer::validateAndStartColor() {
+void Renderer::validateColor() {
     if (!has_colors()) {
         printw("%s", this->color_error_msg.c_str());
 
@@ -38,11 +37,6 @@ void Renderer::validateAndStartColor() {
     // add all color pairs
     for (Renderer::ColorPair pair : this->color_pairs) {
         init_pair(pair.type, pair.foreground, pair.background);
-    }
-
-    // change to custom colors
-    for (Renderer::CustomColor color : this->custom_colors) {
-        init_color(color.to_change, color.red, color.green, color.blue);
     }
 }
 
@@ -60,6 +54,7 @@ WINDOW *Renderer::createWindow(int height, int width, int start_x, int start_y,
 
 void Renderer::destroyWindow(WINDOW *window) {
     wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    Renderer::clearWindow(window);
     wrefresh(window);
     delwin(window);
 }
@@ -92,12 +87,6 @@ void Renderer::attrMoveWindowPrint(WINDOW *window, attr_t attribute, int x,
     wattroff(window, attribute);
 }
 
-void Renderer::attrMovePrint(attr_t attribute, int x, int y, std::string line) {
-    attron(attribute);
-    mvprintw(y, x, "%s", line.c_str());
-    attroff(attribute);
-}
-
 void Renderer::attrWindowPrint(WINDOW *window, attr_t attribute,
                                std::string line) {
     wattron(window, attribute);
@@ -105,22 +94,6 @@ void Renderer::attrWindowPrint(WINDOW *window, attr_t attribute,
     wattroff(window, attribute);
 }
 
-void Renderer::attrPrint(attr_t attribute, std::string line) {
-    attron(attribute);
-    printw("%s", line.c_str());
-    attroff(attribute);
-}
-
 void Renderer::moveWindowPrint(WINDOW *window, int x, int y, std::string line) {
     mvwprintw(window, y, x, "%s", line.c_str());
 }
-
-void Renderer::movePrint(int x, int y, std::string line) {
-    mvprintw(y, x, "%s", line.c_str());
-}
-
-void Renderer::windowPrint(WINDOW *window, std::string line) {
-    wprintw(window, "%s", line.c_str());
-}
-
-void Renderer::print(std::string line) { printw("%s", line.c_str()); }

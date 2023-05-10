@@ -18,62 +18,139 @@ class GridRenderer : Renderer {
     static const int MIN_GRID_WIDTH = 41;
     static const int MIN_STATUS_WIDTH = 38;
 
+    /** Holds everything needed for grid window */
     struct GridWindow {
         std::string title;
         WINDOW *grid;
         WINDOW *status;
     };
 
-    struct Information {
-        int step;
-        std::chrono::microseconds time_taken;
-        Grid::cost_t cost;
-    };
-
     int grid_height;
     int grid_width;
+    int traverse_delay;
+    int step_delay;
 
-    GridRenderer(std::vector<std::string> titles);
+    /**
+     * @brief Construct a new Grid Renderer object with
+     * `GridRenderer::GridWindow` for each title
+     *
+     * @param titles
+     * @param traverse_delay - delay for pathfinder path traversal
+     * @param step_delay - any other delay
+     */
+    GridRenderer(std::vector<std::string> titles, int traverse_delay = 40,
+                 int step_delay = 1);
 
+    /**
+     * @brief Update grid window cell at specified location using attribute
+     *
+     * @param window
+     * @param attribute
+     * @param location
+     */
     static void updateGridCell(WINDOW *window, attr_t attribute,
                                Grid::Location location);
 
+    /**
+     * @brief Find `GridRenderer::GridWindow` by title
+     *
+     * @param name
+     * @return GridRenderer::GridWindow
+     */
     GridRenderer::GridWindow findWindow(std::string name);
 
+    /**
+     * @brief Draw maze using `maze_record` from maze generator for each stored
+     * `GridRenderer::GridWindow`
+     *
+     * @param maze_record
+     */
     void drawMazes(const std::vector<Grid::ChangeRecord> &maze_record);
-    GridRenderer::Information drawTraversedPath(
+
+    /**
+     * @brief Draw pathfinder path traversal using `traversed` from path finder
+     * for a specified window
+     *
+     * @param window
+     * @param traversed
+     * @return Grid::ChangeRecord used for `GridRenderer::drawFinalPath`
+     */
+    Grid::ChangeRecord drawTraversedPath(
         GridRenderer::GridWindow window,
-        const std::vector<Grid::ChangeRecord> &traversed,
-        const std::unordered_map<Grid::Location, Grid::cost_t> &cost);
+        std::vector<Grid::ChangeRecord> &traversed);
+
+    /**
+     * @brief Draw solution to the maze using `path` from path finder for a
+     * specified window
+     *
+     * @param window
+     * @param information - can be acquired from
+     * `GridRenderer::drawTraversedPath`
+     * @param path
+     */
     void drawFinalPath(GridRenderer::GridWindow window,
-                       GridRenderer::Information information,
+                       Grid::ChangeRecord information,
                        const std::vector<Grid::Location> &path);
 
    private:
     std::vector<GridWindow> windows;
 
+    /**
+     * @brief Render a step in maze generation
+     *
+     * @param is_end
+     * @param window
+     * @param information
+     * @param previous
+     */
     void updateMaze(bool is_end, GridRenderer::GridWindow window,
-                    GridRenderer::Information information,
-                    Grid::Location current,
+                    Grid::ChangeRecord information,
                     std::optional<Grid::Location> previous =
                         std::optional<Grid::Location>());
 
+    /**
+     * @brief Render a step in path traversal
+     *
+     * @param is_end
+     * @param window
+     * @param information
+     * @param previous
+     */
     void updateTraversedPath(bool is_end, GridRenderer::GridWindow window,
-                             GridRenderer::Information information,
-                             Grid::Location current,
+                             Grid::ChangeRecord information,
                              std::optional<Grid::Location> previous =
                                  std::optional<Grid::Location>());
 
+    /**
+     * @brief Render a step in path solution traversal
+     *
+     * @param is_end
+     * @param window
+     * @param information
+     * @param previous
+     */
     void updateFinalPath(bool is_end, GridRenderer::GridWindow window,
-                         GridRenderer::Information information,
-                         Grid::Location current,
+                         Grid::ChangeRecord information,
                          std::optional<Grid::Location> previous =
                              std::optional<Grid::Location>());
 
+    /**
+     * @brief Render status for maze generation
+     *
+     * @param window
+     * @param top_text
+     * @param information
+     */
     void mazeStatus(WINDOW *window, std::string top_text,
-                    GridRenderer::Information information,
-                    Grid::Location current);
+                    Grid::ChangeRecord information);
+
+    /**
+     * @brief Render status for path traversal
+     *
+     * @param window
+     * @param top_text
+     * @param information
+     */
     void pathStatus(WINDOW *window, std::string top_text,
-                    GridRenderer::Information information,
-                    Grid::Location current);
+                    Grid::ChangeRecord information);
 };

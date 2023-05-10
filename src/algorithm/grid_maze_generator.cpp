@@ -1,7 +1,7 @@
 #include "algorithm/grid_maze_generator.h"
 
 void GridMazeGenerator::generate(Grid &grid, Grid::Location start,
-                                 Grid::Location end,
+                                 Grid::Location goal,
                                  std::vector<Grid::ChangeRecord> &record) {
     // set entire grid to wall
     for (int i = 0; i < grid.height; i++) {
@@ -25,13 +25,13 @@ void GridMazeGenerator::generate(Grid &grid, Grid::Location start,
     std::mt19937 gen(seed);
 
     grid[start] = Grid::CellType::EMPTY;
-    grid[end] = Grid::CellType::EMPTY;
+    grid[goal] = Grid::CellType::EMPTY;
 
     std::stack<Grid::Location> to_visit;
     to_visit.push(start);
 
     record.push_back({start, std::chrono::microseconds(0)});
-    record.push_back({end, std::chrono::microseconds(0)});
+    record.push_back({goal, std::chrono::microseconds(0)});
 
     Timer timer;
 

@@ -13,12 +13,24 @@ class AStarSearch {
     typedef typename Graph::ChangeRecord ChangeRecord;
 
    public:
+    /**
+     * @brief Search a path from `start` to `goal` in a graph
+     *
+     * @param graph - graph to search
+     * @param start
+     * @param goal
+     * @param heuristic - heuristic to determine distance from the goal
+     * @param record - list of steps taken by the algorithm. Saves location
+     * (`Location`),time taken (`std::chrono::microseconds`) , and a cost of
+     * location (`Graph::cost_t`)
+     *
+     * @return std::vector<Location> - path from `start` to `goal`
+     */
     static std::vector<Location> search(
         Graph &graph, Location start, Location goal,
         std::function<cost_t(Location, Location)> heuristic,
-        std::vector<ChangeRecord> &record,
-        std::unordered_map<Location, cost_t> &cost_so_far) {
-        // ---
+        std::vector<ChangeRecord> &record) {
+        std::unordered_map<Location, cost_t> cost_so_far;
         PriorityQueue<Location, cost_t> frontier;
         std::vector<Location> neighbors;
         std::unordered_map<Location, Location> came_from;
@@ -31,7 +43,8 @@ class AStarSearch {
         while (!frontier.empty()) {
             Location current = frontier.get();
             timer.tock();
-            record.push_back({current, timer.duration()});
+            record.push_back(
+                {current, timer.duration(), 0, cost_so_far[current]});
 
             if (current == goal) {
                 break;
@@ -54,6 +67,15 @@ class AStarSearch {
         return AStarSearch::reconstruct_path(start, goal, came_from);
     }
 
+    /**
+     * @brief Reconstruct path from `start` to `goal`
+     *
+     * @param start - start position
+     * @param goal - end position
+     * @param came_from - map of ways to location
+     *
+     * @return std::vector<Location>
+     */
     static std::vector<Location> reconstruct_path(
         Location start, Location goal,
         std::unordered_map<Location, Location> &came_from) {

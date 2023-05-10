@@ -13,7 +13,8 @@ src = [
   'src/data_structure/grid.cpp',
   'src/algorithm/grid_maze_generator.cpp',
   'src/renderer/grid_renderer.cpp',
-  'src/renderer/renderer.cpp'
+  'src/renderer/renderer.cpp',
+  'src/utility/cmd_options.cpp'
 ]
 
 curses = dependency('curses')

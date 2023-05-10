@@ -1,9 +1,11 @@
-#include "renderer/grid_renderer.h"
-
 #include <chrono>
 
-GridRenderer::GridRenderer(std::vector<std::string> titles) : Renderer() {
-    this->validateAndStartColor();
+#include "renderer/grid_renderer.h"
+
+GridRenderer::GridRenderer(std::vector<std::string> titles, int traverse_delay,
+                           int step_delay)
+    : Renderer() {
+    this->validateColor();
 
     int grid_windows = titles.size();
 
@@ -33,6 +35,9 @@ GridRenderer::GridRenderer(std::vector<std::string> titles) : Renderer() {
 
         this->windows.push_back(window);
     }
+
+    this->traverse_delay = traverse_delay;
+    this->step_delay = step_delay;
 }
 
 void GridRenderer::updateGridCell(WINDOW *window, attr_t attribute,
@@ -65,41 +70,42 @@ void GridRenderer::drawMazes(
 
     for (int steps = 0; steps < (int)maze_record.size(); steps++) {
         for (GridRenderer::GridWindow window : this->windows) {
-            this->updateMaze(false, window,
-                             {steps, maze_record[steps].time_taken, 0},
-                             maze_record[steps].location,
-                             steps == 0 ? std::optional<Grid::Location>()
-                                        : maze_record[steps - 1].location);
+            this->updateMaze(
+                false, window,
+                Grid::ChangeRecord{maze_record[steps].location,
+                                   maze_record[steps].time_taken, steps},
+                steps == 0 ? std::optional<Grid::Location>()
+                           : maze_record[steps - 1].location);
         }
 
         // create any delay make maze generation smooth
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(this->step_delay));
     }
 
     for (GridRenderer::GridWindow window : this->windows) {
         this->updateMaze(
             true, window,
-            {(int)maze_record.size(), maze_record.back().time_taken, 0},
-            maze_record.back().location);
+            {maze_record.back().location, maze_record.back().time_taken,
+             (int)maze_record.size()});
     }
 }
 
 void GridRenderer::updateMaze(bool is_end, GridRenderer::GridWindow window,
-                              GridRenderer::Information information,
-                              Grid::Location current,
+                              Grid::ChangeRecord information,
                               std::optional<Grid::Location> previous) {
     // status window
     this->mazeStatus(
         window.status,
         is_end ? "The maze was generated!" : "Generating the maze...",
-        information, current);
+        information);
 
     // grid window
     auto current_color = is_end ? GridRenderer::ColorType::MAZE_TRAVERSED
                                 : GridRenderer::ColorType::MAZE_CURRENT;
 
-    GridRenderer::updateGridCell(window.grid,
-                                 COLOR_PAIR(current_color) | A_INVIS, current);
+    GridRenderer::updateGridCell(
+        window.grid, COLOR_PAIR(current_color) | A_INVIS, information.location);
 
     if (previous.has_value()) {
         GridRenderer::updateGridCell(
@@ -109,47 +115,43 @@ void GridRenderer::updateMaze(bool is_end, GridRenderer::GridWindow window,
     }
 }
 
-GridRenderer::Information GridRenderer::drawTraversedPath(
+Grid::ChangeRecord GridRenderer::drawTraversedPath(
     const GridRenderer::GridWindow window,
-    const std::vector<Grid::ChangeRecord> &traversed,
-    const std::unordered_map<Grid::Location, Grid::cost_t> &cost) {
+    std::vector<Grid::ChangeRecord> &traversed) {
     for (int steps = 0; steps < (int)traversed.size(); steps++) {
-        this->updateTraversedPath(false, window,
-                                  {steps, traversed[steps].time_taken,
-                                   cost.at(traversed[steps].location)},
-                                  traversed[steps].location,
+        traversed[steps].step = steps;
+
+        this->updateTraversedPath(false, window, traversed[steps],
                                   steps == 0 ? std::optional<Grid::Location>()
                                              : traversed[steps - 1].location);
 
         // create any delay make traversing smooth
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(this->traverse_delay));
     }
 
-    GridRenderer::Information result{(int)traversed.size(),
-                                     traversed.back().time_taken,
-                                     cost.at(traversed.back().location)};
+    Grid::ChangeRecord result = traversed.back();
 
-    this->updateTraversedPath(true, window, result, traversed.back().location);
+    this->updateTraversedPath(true, window, result);
 
     return result;
 }
 
 void GridRenderer::updateTraversedPath(bool is_end,
                                        GridRenderer::GridWindow window,
-                                       GridRenderer::Information information,
-                                       Grid::Location current,
+                                       Grid::ChangeRecord information,
                                        std::optional<Grid::Location> previous) {
     // status window
     this->pathStatus(window.status,
                      is_end ? "The path was found!" : "Finding the path...",
-                     information, current);
+                     information);
 
     // grid window
     auto current_color = is_end ? GridRenderer::ColorType::PATHFINDER_TRAVERSED
                                 : GridRenderer::ColorType::PATHFINDER_CURRENT;
 
-    GridRenderer::updateGridCell(window.grid,
-                                 COLOR_PAIR(current_color) | A_INVIS, current);
+    GridRenderer::updateGridCell(
+        window.grid, COLOR_PAIR(current_color) | A_INVIS, information.location);
 
     if (previous.has_value()) {
         GridRenderer::updateGridCell(
@@ -160,37 +162,39 @@ void GridRenderer::updateTraversedPath(bool is_end,
 }
 
 void GridRenderer::drawFinalPath(GridRenderer::GridWindow window,
-                                 GridRenderer::Information information,
+                                 Grid::ChangeRecord information,
                                  const std::vector<Grid::Location> &path) {
     for (int steps = 0; steps < (int)path.size(); steps++) {
         this->updateFinalPath(
-            false, window, information, path[steps],
+            false, window,
+            {path[steps], information.time_taken, information.step,
+             information.cost},
             steps == 0 ? std::optional<Grid::Location>() : path[steps - 1]);
 
         // create any delay make traversing smooth
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(this->step_delay));
     }
 
     this->updateFinalPath(true, window, information, path.back());
 }
 
 void GridRenderer::updateFinalPath(bool is_end, GridRenderer::GridWindow window,
-                                   GridRenderer::Information information,
-                                   Grid::Location current,
+                                   Grid::ChangeRecord information,
                                    std::optional<Grid::Location> previous) {
     // status window
     this->pathStatus(
         window.status,
         is_end ? "The path was traversed!" : "Traversing the path...",
-        information, current);
+        information);
 
     // grid window
     auto current_color =
         is_end ? GridRenderer::ColorType::PATHFINDER_FINAL_TRAVERSED
                : GridRenderer::ColorType::PATHFINDER_CURRENT;
 
-    GridRenderer::updateGridCell(window.grid,
-                                 COLOR_PAIR(current_color) | A_INVIS, current);
+    GridRenderer::updateGridCell(
+        window.grid, COLOR_PAIR(current_color) | A_INVIS, information.location);
 
     if (previous.has_value()) {
         GridRenderer::updateGridCell(
@@ -202,8 +206,7 @@ void GridRenderer::updateFinalPath(bool is_end, GridRenderer::GridWindow window,
 }
 
 void GridRenderer::mazeStatus(WINDOW *window, std::string top_text,
-                              GridRenderer::Information information,
-                              Grid::Location current) {
+                              Grid::ChangeRecord information) {
     // status window
     GridRenderer::clearWindow(window);
     GridRenderer::moveWindowPrint(window, 1, 1, top_text);
@@ -216,7 +219,7 @@ void GridRenderer::mazeStatus(WINDOW *window, std::string top_text,
     GridRenderer::moveWindowPrint(window, 1, 4, "Last position: ");
     GridRenderer::attrWindowPrint(window,
                                   COLOR_PAIR(GridRenderer::ColorType::VALUE),
-                                  std::to_string(current));
+                                  std::to_string(information.location));
 
     Timer timer;
 
@@ -229,8 +232,7 @@ void GridRenderer::mazeStatus(WINDOW *window, std::string top_text,
 }
 
 void GridRenderer::pathStatus(WINDOW *window, std::string top_text,
-                              GridRenderer::Information information,
-                              Grid::Location current) {
+                              Grid::ChangeRecord information) {
     // status window
     GridRenderer::clearWindow(window);
     GridRenderer::moveWindowPrint(window, 1, 1, top_text);
@@ -243,7 +245,7 @@ void GridRenderer::pathStatus(WINDOW *window, std::string top_text,
     GridRenderer::moveWindowPrint(window, 1, 4, "Last position: ");
     GridRenderer::attrWindowPrint(window,
                                   COLOR_PAIR(GridRenderer::ColorType::VALUE),
-                                  std::to_string(current));
+                                  std::to_string(information.location));
 
     GridRenderer::moveWindowPrint(window, 1, 5, "Last cost: ");
     GridRenderer::attrWindowPrint(window,

@@ -12,19 +12,40 @@ class Timer {
     timep_t _start = ClockT::now(), _end = {};
 
    public:
+   /**
+    * @brief Reset the timer
+    *
+    */
     void tick() {
         _end = timep_t{};
         _start = ClockT::now();
     }
 
+    /**
+     * @brief Save timer position
+     *
+     */
     void tock() { _end = ClockT::now(); }
 
+    /**
+     * @brief Get duration between start and `Timer::tock()`
+     *
+     * @tparam T
+     * @return auto
+     */
     template <class T = DT>
     auto duration() const {
         ;
         return std::chrono::duration_cast<T>(_end - _start);
     }
 
+    /**
+     * @brief Format duration using format `<Minutes>m <Seconds>s <Milliseconds>ms <Microseconds>us`
+     *
+     * @tparam T
+     * @param duration
+     * @return std::string
+     */
     template <class T = DT>
     std::string format(T duration) {
         std::string result;
