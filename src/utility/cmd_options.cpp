@@ -86,12 +86,11 @@ void Terminal::help(std::vector<Terminal::Option> options) {
 }
 
 void Terminal::error(std::string error) {
-
     std::cout << "\033[31m" << error << "\033[0m" << std::endl;
 }
 
-std::vector<std::string>::iterator Terminal::getOption(
-    std::string option, bool is_value_required) {
+std::vector<std::string>::iterator Terminal::getOption(std::string option,
+                                                       bool is_value_required) {
     auto found =
         std::find(this->arguments.begin(), this->arguments.end(), option);
 

@@ -42,7 +42,8 @@ class PriorityQueue {
     T pop() {
         if (this->empty()) {
             throw std::out_of_range(
-                "Out of range exception: Cannot pop from priority queue. Priority queue is empty.");
+                "Out of range exception: Cannot pop from priority queue. "
+                "Priority queue is empty.");
         }
 
         T best_item = this->elements.top().second;

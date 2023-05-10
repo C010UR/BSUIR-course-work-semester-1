@@ -51,7 +51,8 @@ class Renderer {
      * @param min_width
      * @param min_height
      */
-    void validateTerminalResolution(const size_t min_width, const size_t min_height);
+    void validateTerminalResolution(const size_t min_width,
+                                    const size_t min_height);
 
     /**
      * @brief Validate if terminal supports colors and starts `ncurses` color

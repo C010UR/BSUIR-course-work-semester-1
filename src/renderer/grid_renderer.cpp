@@ -207,7 +207,9 @@ void GridRenderer::drawPath(const GridRenderer::GridWindow &window,
                             const std::vector<Grid::ChangeRecord> &traversed,
                             const std::vector<Grid::Location> &path) {
     if (traversed.empty() || path.empty()) {
-        throw std::invalid_argument("Grid Renderer exception: Cannot draw path traversal. Path traversal record is empty.");
+        throw std::invalid_argument(
+            "Grid Renderer exception: Cannot draw path traversal. Path "
+            "traversal record is empty.");
     }
 
     for (size_t steps = 0; steps < traversed.size(); steps++) {

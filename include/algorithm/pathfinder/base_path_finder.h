@@ -19,8 +19,8 @@ class BasePathFinder {
     static std::vector<typename Graph::Location> reconstruct_path(
         const typename Graph::Location &start,
         const typename Graph::Location &goal,
-        std::unordered_map<typename Graph::Location,
-                                 typename Graph::Location> &came_from) {
+        std::unordered_map<typename Graph::Location, typename Graph::Location>
+            &came_from) {
         std::vector<typename Graph::Location> path;
         typename Graph::Location current = goal;
 
