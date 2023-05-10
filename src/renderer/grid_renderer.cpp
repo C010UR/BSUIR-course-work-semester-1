@@ -1,7 +1,7 @@
+#include "renderer/grid_renderer.h"
+
 #include <chrono>
 #include <vector>
-
-#include "renderer/grid_renderer.h"
 
 GridRenderer::GridRenderer(std::vector<std::string> titles, int traverse_delay,
                            int step_delay)

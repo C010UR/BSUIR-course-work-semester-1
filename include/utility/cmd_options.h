@@ -42,7 +42,8 @@ class CmdOptions {
     std::string getOptionValue(CmdOptions::Option option);
 
     /**
-     * @brief Check if option object exists and has value (if option requires it)
+     * @brief Check if option object exists and has value (if option requires
+     * it)
      *
      * @param option
      * @return true
@@ -51,11 +52,13 @@ class CmdOptions {
     bool isOptionExists(CmdOptions::Option option);
 
     /**
-     * @brief Get pointer to option if it is present and has value (if option requires it)
+     * @brief Get pointer to option if it is present and has value (if option
+     * requires it)
      *
      * @param option
      * @param has_value
      * @return std::vector<std::string>::iterator
      */
-    std::vector<std::string>::iterator getOption(std::string option, bool is_value_required = false);
+    std::vector<std::string>::iterator getOption(
+        std::string option, bool is_value_required = false);
 };

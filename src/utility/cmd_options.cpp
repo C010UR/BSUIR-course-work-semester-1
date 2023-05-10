@@ -1,4 +1,5 @@
 #include "utility/cmd_options.h"
+
 #include <ostream>
 
 CmdOptions::CmdOptions(int argc, char **argv) {
@@ -18,7 +19,8 @@ void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
               << "Dijkstra" << color_reset << std::endl
               << color_red
               << "If program halts, press any button to continue/exit."
-              << color_reset << std::endl << std::endl;
+              << color_reset << std::endl
+              << std::endl;
 
     if (options.empty()) {
         exit(EXIT_SUCCESS);
@@ -71,8 +73,8 @@ void CmdOptions::printHelp(std::vector<CmdOptions::Option> options) {
     exit(EXIT_SUCCESS);
 }
 
-std::vector<std::string>::iterator CmdOptions::getOption(std::string option,
-                                                         bool is_value_required) {
+std::vector<std::string>::iterator CmdOptions::getOption(
+    std::string option, bool is_value_required) {
     auto found =
         std::find(this->arguments.begin(), this->arguments.end(), option);
 

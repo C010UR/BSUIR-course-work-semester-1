@@ -1,5 +1,6 @@
-#include "ncurses.h"
 #include "renderer/renderer.h"
+
+#include "ncurses.h"
 
 Renderer::~Renderer() { endwin(); }
 

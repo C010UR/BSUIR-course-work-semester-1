@@ -12,10 +12,10 @@ class Timer {
     timep_t _start = ClockT::now(), _end = {};
 
    public:
-   /**
-    * @brief Reset the timer
-    *
-    */
+    /**
+     * @brief Reset the timer
+     *
+     */
     void tick() {
         _end = timep_t{};
         _start = ClockT::now();
@@ -40,7 +40,8 @@ class Timer {
     }
 
     /**
-     * @brief Format duration using format `<Minutes>m <Seconds>s <Milliseconds>ms <Microseconds>us`
+     * @brief Format duration using format `<Minutes>m <Seconds>s
+     * <Milliseconds>ms <Microseconds>us`
      *
      * @tparam T
      * @param duration

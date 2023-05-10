@@ -20,7 +20,8 @@ bool Grid::isPassable(Grid::Location location) const {
 }
 
 std::vector<Grid::Location> Grid::neighbors(Grid::Location location,
-                                            int distance, bool is_passable) const {
+                                            int distance,
+                                            bool is_passable) const {
     std::vector<Grid::Location> result;
 
     for (Grid::Location direction : this->DIRECTIONS) {
