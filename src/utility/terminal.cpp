@@ -1,14 +1,15 @@
 #include "utility/terminal.h"
 
 const std::vector<Terminal::Option> Terminal::options = {
-    {"h", "help", false, "Show this help message"},
-    {"t", "traverse-delay", true, "Set path traverse step (in milliseconds)"},
-    {"d", "step-delay", true, "Set step delay (in milliseconds)"},
-    {"p", "parallel", false, "Toggle path parallel draw"},
-    {"", "breadth-first-search", false,
-     "Include Breadth First Search Algorithm to comparison"},
-    {"", "dijkstra", false, "Include Dijkstra Search Algorithm to comparison"},
-    {"", "a-star", false, "Include A* Search Algorithm to comparison"}};
+    {"h", "help", false, "", "", "Show this help message"},
+    {"t", "traverse-delay", true, "", "40ms",
+     "Set path traverse step (in milliseconds)"},
+    {"d", "step-delay", true, "", "1ms", "Set step delay (in milliseconds)"},
+    {"p", "parallel", false, "", "", "Toggle path parallel draw"},
+    {"", "breadth-first-search", false, "PATHFINDER", "",
+     "Breadth First Search Algorithm"},
+    {"", "dijkstra", false, "PATHFINDER", "", "Dijkstra Search Algorithm"},
+    {"", "a-star", false, "PATHFINDER", "", "A* Search Algorithm"}};
 
 Terminal::Terminal(int argc, char **argv) {
     this->arguments = std::vector<std::string>(argv, argv + argc);
@@ -22,17 +23,17 @@ void Terminal::help(std::vector<Terminal::Option> options) {
     // don't use ncurses
     std::string color_reset = "\033[0m";
     std::string color_red = "\033[31m";
+    std::string color_green = "\033[32m";
     std::string color_yellow = "\033[33m";
     std::string color_blue = "\033[34m";
+    std::string color_cyan = "\033[36m";
 
-    std::cout << "This project shows the difference between 2 very popular "
-                 "path finding algorithms: "
-              << color_yellow << "A*" << color_reset << " and " << color_yellow
-              << "Dijkstra" << color_reset << std::endl
-              << color_red
-              << "If program halts, press any button to continue/exit."
-              << color_reset << std::endl
-              << std::endl;
+    std::cout
+        << "This project shows the difference between path finding algorithms."
+        << std::endl
+        << color_red << "If program halts, press any button to continue/exit."
+        << color_reset << std::endl
+        << std::endl;
 
     if (options.empty()) {
         exit(EXIT_SUCCESS);
@@ -64,8 +65,12 @@ void Terminal::help(std::vector<Terminal::Option> options) {
             // Place comma if needed
 
             if (!current.long_cmd.empty()) {
-                std::cout << (current.is_value_required ? ", " : ",       ");
+                std::cout << (current.is_value_required
+                                  ? ", "
+                                  : ", " + std::string(6, ' '));
             }
+        } else {
+            std::cout << std::string(10, ' ');
         }
 
         if (!current.long_cmd.empty()) {
@@ -74,12 +79,28 @@ void Terminal::help(std::vector<Terminal::Option> options) {
             if (current.is_value_required) {
                 std::cout << color_yellow << " VALUE" << color_reset;
             }
+        } else {
+            std::cout << std::string(10, ' ');
         }
 
-        std::cout << std::string(description_space - current.long_cmd.size() +
-                                     (current.is_value_required ? 0 : 6),
+        std::cout << std::string(description_space - current.long_cmd.size() -
+                                     (current.is_value_required ? 6 : 0),
                                  ' ')
-                  << " - " << current.description << std::endl;
+                  << " - ";
+
+        std::cout << color_cyan
+                  << (current.prefix.empty() ? "" : "[" + current.prefix + "] ")
+                  << color_reset;
+
+        std::cout << current.description;
+
+        std::cout << color_green
+                  << (current.default_value.empty()
+                          ? ""
+                          : " [Defaults to " + current.default_value + "]")
+                  << color_reset;
+
+        std::cout << std::endl;
     }
 
     exit(EXIT_SUCCESS);

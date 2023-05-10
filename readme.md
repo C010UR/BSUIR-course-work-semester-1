@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project shows the difference between 2 very popular path finding algorithms: __A* and Dijkstra__
+This project visually compares path finding algorithms in a maze.
 
 https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/9da0b87c-7bf3-495b-889a-c6ab98bdc6c7
 
@@ -32,3 +32,18 @@ meson compile -C {{ build directory }}
 ```
 
 After compilation a program will be stored in `build` directory
+
+## Running
+
+To see help message, add `-h` or `--help` flag
+
+```console
+./pathfinder-comparison.exe -h
+```
+
+To run a program you need to specify at least one of provided pathfinder algorithms (They are marked `[PATHFINDER]` in options list).
+Example command
+
+```console
+./pathfinder-comparison -t 100 -d 0 -p --breadth-first-search --dijkstra --a-star
+```

@@ -14,6 +14,8 @@ class Terminal {
         std::string short_cmd;
         std::string long_cmd;
         bool is_value_required = false;
+        std::string prefix;
+        std::string default_value;
         std::string description;
     };
 

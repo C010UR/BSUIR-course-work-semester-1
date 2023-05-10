@@ -59,9 +59,8 @@ int main(int argc, char **argv) {
         std::vector<Grid::ChangeRecord> maze_record;
         GridMazeGenerator::generate(grid, start, end, maze_record);
 
-        std::vector<std::vector<Grid::ChangeRecord>> traversed(
-            algorithms_amount);
-        std::vector<std::vector<Grid::Location>> path(algorithms_amount);
+        std::vector<std::vector<Grid::ChangeRecord>> traversed;
+        std::vector<std::vector<Grid::Location>> path;
 
         // algorithms
         std::vector<std::string> titles;

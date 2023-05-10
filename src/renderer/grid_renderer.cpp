@@ -1,3 +1,5 @@
+#include <string>
+
 #include "renderer/grid_renderer.h"
 
 GridRenderer::GridRenderer(size_t windows_amount, unsigned traverse_delay,
@@ -169,10 +171,14 @@ void GridRenderer::drawPath(
             "traversal record is empty.");
     }
 
-    if (titles.size() != traversed.size() || titles.size() != path.size()) {
+    if (titles.size() != traversed.size() && titles.size() != path.size()) {
         throw std::invalid_argument(
-            "Grid Renderer exception: Cannot draw path traversal. Size of "
-            "windows and path traversal records are not equal.");
+            "Grid Renderer exception: Cannot draw path traversal. Amount of "
+            "windows and path traversal records are not equal. Amount of "
+            "windows: " +
+            std::to_string(titles.size()) +
+            "; amount of traversal: " + std::to_string(traversed.size()) +
+            "; amount of paths: " + std::to_string(path.size()) + ".");
     }
 
     // find all windows
