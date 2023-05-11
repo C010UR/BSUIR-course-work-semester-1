@@ -113,7 +113,7 @@ void GridRenderer::drawMazes(const std::vector<Grid::ChangeRecord> &maze_record)
             this->updateMaze(
                 false,
                 window,
-                Grid::ChangeRecord{ maze_record[steps].location, maze_record[steps].time_taken, steps },
+                Grid::ChangeRecord{maze_record[steps].location, maze_record[steps].time_taken, steps},
                 steps == 0 ? std::optional<Grid::Location>() : maze_record[steps - 1].location
             );
         }
@@ -125,7 +125,7 @@ void GridRenderer::drawMazes(const std::vector<Grid::ChangeRecord> &maze_record)
     for (GridRenderer::GridWindow window : this->windows)
     {
         this->updateMaze(
-            true, window, { maze_record.back().location, maze_record.back().time_taken, maze_record.size() }
+            true, window, {maze_record.back().location, maze_record.back().time_taken, maze_record.size()}
         );
     }
 }
@@ -249,7 +249,7 @@ void GridRenderer::drawPath(
         this->updateTraversedFinalPath(
             false,
             window,
-            { path[steps], result_info.time_taken, result_info.step, result_info.cost },
+            {path[steps], result_info.time_taken, result_info.step, result_info.cost},
             steps == 0 ? std::optional<Grid::Location>() : path[steps - 1]
         );
 
