@@ -1,5 +1,10 @@
 BasedOnStyle: Microsoft
 
+ColumnLimit: 120
+LineEnding: LF
+RemoveSemicolon: true
+IndentWidth: 4
+
 AlignAfterOpenBracket: BlockIndent
 AlignArrayOfStructures: Left
 AlignConsecutiveAssignments: Consecutive
@@ -15,7 +20,3 @@ BinPackParameters: false
 
 BreakBeforeBinaryOperators: true
 BreakBeforeTernaryOperators: true
-
-ColumnLimit: 120
-LineEnding: LF
-RemoveSemicolon: true

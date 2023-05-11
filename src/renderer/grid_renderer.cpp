@@ -241,6 +241,7 @@ void GridRenderer::drawPath(
         std::this_thread::sleep_for(std::chrono::milliseconds(this->traverse_delay));
     }
     Grid::ChangeRecord result_info = traversed.back();
+    result_info.step               = traversed.size() - 1;
 
     this->updateTraversedPath(true, window, result_info);
 
@@ -314,19 +315,19 @@ void GridRenderer::mazeStatus(WINDOW *window, const std::string &top_text, const
     GridRenderer::clearWindow(window);
     GridRenderer::moveWindowPrint(window, 1, 1, top_text);
 
-    GridRenderer::moveWindowPrint(window, 1, 3, "Total steps: ");
+    GridRenderer::moveWindowPrint(window, 1, 3, "Steps taken:      ");
     GridRenderer::attrWindowPrint(
         window, COLOR_PAIR(GridRenderer::ColorType::VALUE), std::to_string(information.step + 1)
     );
 
-    GridRenderer::moveWindowPrint(window, 1, 4, "Last position: ");
+    GridRenderer::moveWindowPrint(window, 1, 4, "Current position: ");
     GridRenderer::attrWindowPrint(
         window, COLOR_PAIR(GridRenderer::ColorType::VALUE), std::to_string(information.location)
     );
 
     Timer timer;
 
-    GridRenderer::moveWindowPrint(window, 1, 5, "Time elapsed: ");
+    GridRenderer::moveWindowPrint(window, 1, 5, "Elapsed estimate: ");
     GridRenderer::attrWindowPrint(
         window, COLOR_PAIR(GridRenderer::ColorType::VALUE), timer.format(information.time_taken)
     );
@@ -340,22 +341,22 @@ void GridRenderer::pathStatus(WINDOW *window, const std::string &top_text, const
     GridRenderer::clearWindow(window);
     GridRenderer::moveWindowPrint(window, 1, 1, top_text);
 
-    GridRenderer::moveWindowPrint(window, 1, 3, "Total steps: ");
+    GridRenderer::moveWindowPrint(window, 1, 3, "Steps taken:      ");
     GridRenderer::attrWindowPrint(
         window, COLOR_PAIR(GridRenderer::ColorType::VALUE), std::to_string(information.step + 1)
     );
 
-    GridRenderer::moveWindowPrint(window, 1, 4, "Last position: ");
+    GridRenderer::moveWindowPrint(window, 1, 4, "Current position: ");
     GridRenderer::attrWindowPrint(
         window, COLOR_PAIR(GridRenderer::ColorType::VALUE), std::to_string(information.location)
     );
 
-    GridRenderer::moveWindowPrint(window, 1, 5, "Last cost: ");
+    GridRenderer::moveWindowPrint(window, 1, 5, "Current cost:     ");
     GridRenderer::attrWindowPrint(window, COLOR_PAIR(GridRenderer::ColorType::VALUE), std::to_string(information.cost));
 
     Timer timer;
 
-    GridRenderer::moveWindowPrint(window, 1, 6, "Time elapsed: ");
+    GridRenderer::moveWindowPrint(window, 1, 6, "Elapsed estimate: ");
     GridRenderer::attrWindowPrint(
         window, COLOR_PAIR(GridRenderer::ColorType::VALUE), timer.format(information.time_taken)
     );
