@@ -1,13 +1,15 @@
 #include "utility/terminal.h"
 
 const std::vector<Terminal::Option> Terminal::options = {
-    {"h", "help",                 false, "",           "",     "Show this help message"                  },
-    {"t", "traverse-delay",       true,  "",           "40ms", "Set path traverse step (in milliseconds)"},
-    {"d", "step-delay",           true,  "",           "1ms",  "Set step delay (in milliseconds)"        },
-    {"p", "parallel",             false, "",           "",     "Toggle path parallel draw"               },
-    {"",  "breadth-first-search", false, "PATHFINDER", "",     "Breadth First Search Algorithm"          },
-    {"",  "dijkstra",             false, "PATHFINDER", "",     "Dijkstra Search Algorithm"               },
-    {"",  "a-star",               false, "PATHFINDER", "",     "A* Search Algorithm"                     }
+    {"h", "help",                    false, "",               "",     "Show this help message"                  },
+    {"t", "traverse-delay",          true,  "",               "40ms", "Set path traverse step (in milliseconds)"},
+    {"d", "step-delay",              true,  "",               "1ms",  "Set step delay (in milliseconds)"        },
+    {"p", "parallel",                false, "",               "",     "Toggle path parallel draw"               },
+    {"",  "breadth-first-search",    false, "pathfinder",     "",     "Breadth First Search Algorithm"          },
+    {"",  "dijkstra",                false, "pathfinder",     "",     "Dijkstra Search Algorithm"               },
+    {"",  "a-star",                  false, "pathfinder",     "",     "A* Search Algorithm"                     },
+    {"",  "maze-depth-first-search", false, "maze generator", "",     "Depth First Search Maze Generator"       },
+    {"",  "maze-block",              false, "maze generator", "",     "Block Maze Generator"                    }
 };
 
 Terminal::Terminal(int argc, char **argv)
@@ -20,7 +22,7 @@ Terminal::Terminal(int argc, char **argv)
     }
 }
 
-void Terminal::help(std::vector<Terminal::Option> options)
+void Terminal::help(std::vector<Terminal::Option> options) const
 {
     // don't use ncurses
     std::string color_reset  = "\033[0m";
@@ -110,12 +112,12 @@ void Terminal::help(std::vector<Terminal::Option> options)
     exit(EXIT_SUCCESS);
 }
 
-void Terminal::error(std::string error)
+void Terminal::error(std::string error) const
 {
     std::cout << "\033[31m" << error << "\033[0m" << std::endl;
 }
 
-std::vector<std::string>::iterator Terminal::getOption(std::string option, bool is_value_required)
+std::vector<std::string>::const_iterator Terminal::getOption(std::string option, bool is_value_required) const
 {
     auto found = std::find(this->arguments.begin(), this->arguments.end(), option);
 
@@ -127,7 +129,7 @@ std::vector<std::string>::iterator Terminal::getOption(std::string option, bool 
     return found;
 }
 
-bool Terminal::isOptionExists(Terminal::Option option)
+bool Terminal::isOptionExists(Terminal::Option option) const
 {
     return this->getOption("-" + option.short_cmd, option.is_value_required) != this->arguments.end()
            || this->getOption("--" + option.long_cmd, option.is_value_required) != this->arguments.end();

@@ -11,7 +11,9 @@ incdir = include_directories('include')
 src = [
   'src/main.cpp',
   'src/data_structure/grid.cpp',
-  'src/algorithm/grid_maze_generator.cpp',
+  'src/algorithm/maze_generator/base_maze_generator.cpp',
+  'src/algorithm/maze_generator/block_maze_generator.cpp',
+  'src/algorithm/maze_generator/depth_first_search_maze_generator.cpp',
   'src/renderer/grid_renderer.cpp',
   'src/renderer/renderer.cpp',
   'src/utility/terminal.cpp'

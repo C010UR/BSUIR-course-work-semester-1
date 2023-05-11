@@ -221,7 +221,7 @@ void GridRenderer::drawPath(
     const std::vector<Grid::Location>     &path
 )
 {
-    if (traversed.empty() || path.empty())
+    if (traversed.empty())
     {
         throw std::invalid_argument(
             "Grid Renderer exception: Cannot draw path traversal. Path traversal record is empty."
@@ -244,6 +244,11 @@ void GridRenderer::drawPath(
     result_info.step               = traversed.size() - 1;
 
     this->updateTraversedPath(true, window, result_info);
+
+    if (path.empty())
+    {
+        return;
+    }
 
     for (size_t steps = 0; steps < path.size(); steps++)
     {
@@ -268,8 +273,11 @@ void GridRenderer::updateTraversedPath(
     const std::optional<Grid::Location> &previous
 )
 {
+    // lock threads to render with ncurses
+    std::lock_guard<std::mutex> lock(this->mutex);
+
     // status window
-    this->pathStatus(window.status, is_end ? "The path was found!" : "Finding the path...", information);
+    this->pathStatus(window.status, is_end ? "The path was not found!" : "Finding the path...", information);
 
     // grid window
     auto current_color
@@ -292,6 +300,9 @@ void GridRenderer::updateTraversedFinalPath(
     const std::optional<Grid::Location> &previous
 )
 {
+    // lock threads to render with ncurses
+    std::lock_guard<std::mutex> lock(this->mutex);
+
     // status window
     this->pathStatus(window.status, is_end ? "The path was traversed!" : "Traversing the path...", information);
 

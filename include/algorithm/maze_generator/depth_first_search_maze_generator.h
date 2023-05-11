@@ -1,18 +1,14 @@
 #pragma once
 
-#include <random>
 #include <stack>
-#include <stdexcept>
 
+#include "algorithm/maze_generator/base_maze_generator.h"
 #include "data_structure/grid.h"
 #include "utility/timer.h"
 
-class GridMazeGenerator
+class DepthFirstSearchMazeGenerator : BaseMazeGenerator
 {
   public:
-    static const size_t min_width  = 3;
-    static const size_t min_height = 3;
-
     /**
      * @brief Generate a maze from `start` to `goal`
      *
@@ -22,7 +18,7 @@ class GridMazeGenerator
      * @param record - list of steps taken by the algorithm. Saves location
      * (`Location`) and time taken (`std::chrono::microseconds`)
      */
-    static void generate(
+    void generate(
         Grid &grid, const Grid::Location &start, const Grid::Location &goal, std::vector<Grid::ChangeRecord> &record
     );
 };

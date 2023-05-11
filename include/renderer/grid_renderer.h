@@ -3,6 +3,7 @@
 #include <ncurses.h>
 
 #include <chrono>
+#include <mutex>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -27,6 +28,8 @@ class GridRenderer : Renderer
         WINDOW     *grid;
         WINDOW     *status;
     };
+
+    std::mutex mutex;
 
     size_t   windows_amount;
     size_t   grid_height;

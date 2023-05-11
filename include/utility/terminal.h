@@ -29,7 +29,9 @@ class Terminal
         PARALLEL,
         BREADTH_FIRST_SEARCH_ALGORITHM,
         DIJKSTRA_ALGORITHM,
-        A_STAR_ALGORITHM
+        A_STAR_ALGORITHM,
+        DEPTH_FIRST_SEARCH_MAZE_GENERATOR,
+        BLOCK_MAZE_GENERATOR
     };
 
     static const std::vector<Terminal::Option> options;
@@ -49,14 +51,14 @@ class Terminal
      * @param commands
      * @param is_argument_error
      */
-    void help(std::vector<Terminal::Option> commands);
+    void help(std::vector<Terminal::Option> commands) const;
 
     /**
      * @brief Print error message and exit
      *
      * @param error
      */
-    void error(std::string error);
+    void error(std::string error) const;
 
     /**
      * @brief Check if option object exists and has value (if option requires
@@ -66,7 +68,7 @@ class Terminal
      * @return true
      * @return false
      */
-    bool isOptionExists(Terminal::Option option);
+    bool isOptionExists(Terminal::Option option) const;
 
     /**
      * @brief Get pointer to option if it is present and has value (if option
@@ -74,9 +76,9 @@ class Terminal
      *
      * @param option
      * @param has_value
-     * @return std::vector<std::string>::iterator
+     * @return std::vector<std::string>::const_iterator
      */
-    std::vector<std::string>::iterator getOption(std::string option, bool is_value_required = false);
+    std::vector<std::string>::const_iterator getOption(std::string option, bool is_value_required = false) const;
 
     /**
      * @brief Get option value if present, otherwise fail
@@ -86,7 +88,7 @@ class Terminal
      * @param _default - if option was not specified
      * @return T
      */
-    template <typename T> T getOptionValue(Terminal::Option option, T _default)
+    template <typename T> T getOptionValue(Terminal::Option option, T _default) const
     {
         if (!option.is_value_required || !this->isOptionExists(option))
         {

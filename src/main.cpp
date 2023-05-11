@@ -6,7 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "algorithm/grid_maze_generator.h"
+#include "algorithm/maze_generator/block_maze_generator.h"
+#include "algorithm/maze_generator/depth_first_search_maze_generator.h"
 #include "algorithm/pathfinder/a_star_search.h"
 #include "algorithm/pathfinder/breadth_first_search.h"
 #include "algorithm/pathfinder/dijkstra_search.h"
@@ -24,74 +25,111 @@ int main(int argc, char **argv)
         unsigned traverse_delay, step_delay;
 
         // options
-        traverse_delay = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::TRAVERSE_DELAY], 40);
+        traverse_delay   = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::TRAVERSE_DELAY], 40);
+        step_delay       = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::STEP_DELAY], 1);
+        bool is_parallel = terminal.isOptionExists(terminal.options[Terminal::Options::PARALLEL]);
 
-        step_delay = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::TRAVERSE_DELAY], 1);
+        auto addOption = [terminal](std::vector<Terminal::Options> &vec, Terminal::Options opt) {
+            if (terminal.isOptionExists(terminal.options[opt]))
+            {
+                vec.push_back(opt);
+            }
+        };
 
-        bool is_parallel = false;
+        std::vector<Terminal::Options> algorithms;
 
-        if (terminal.isOptionExists(terminal.options[Terminal::Options::PARALLEL]))
-        {
-            is_parallel = true;
-        }
+        addOption(algorithms, Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM);
+        addOption(algorithms, Terminal::Options::DIJKSTRA_ALGORITHM);
+        addOption(algorithms, Terminal::Options::A_STAR_ALGORITHM);
 
-        int algorithms_amount
-            = terminal.isOptionExists(terminal.options[Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM])
-              + terminal.isOptionExists(terminal.options[Terminal::Options::DIJKSTRA_ALGORITHM])
-              + terminal.isOptionExists(terminal.options[Terminal::Options::A_STAR_ALGORITHM]);
-
-        if (algorithms_amount == 0)
+        if (algorithms.empty())
         {
             throw std::invalid_argument(
                 "Argument exception: Cannot start a program. Must include at least one algorithm."
             );
         }
 
-        GridRenderer renderer(algorithms_amount, traverse_delay, step_delay);
+        std::vector<Terminal::Options> maze_generators;
+
+        addOption(maze_generators, Terminal::Options::DEPTH_FIRST_SEARCH_MAZE_GENERATOR);
+        addOption(maze_generators, Terminal::Options::BLOCK_MAZE_GENERATOR);
+
+        if (maze_generators.empty())
+        {
+            throw std::invalid_argument(
+                "Argument exception: Cannot start a program. Must include at least one maze generator."
+            );
+        }
+
+        GridRenderer renderer(algorithms.size(), traverse_delay, step_delay);
         Grid         grid(renderer.grid_width, renderer.grid_height);
 
-        int            start_x = grid.width / 2;
-        int            start_y = grid.height / 2;
+        int start_x = grid.width / 2;
+        int start_y = grid.height / 2;
+
         Grid::Location start{start_x % 2 == 0 ? ++start_x : start_x, start_y % 2 == 0 ? ++start_y : start_y};
         Grid::Location end{(int)grid.width - 1, (int)grid.height - 2};
 
-        std::vector<Grid::ChangeRecord> maze_record;
-        GridMazeGenerator::generate(grid, start, end, maze_record);
-
-        std::vector<std::vector<Grid::ChangeRecord>> traversed;
-        std::vector<std::vector<Grid::Location>>     path;
-
-        // algorithms
-        std::vector<std::string> titles;
-
-        if (terminal.isOptionExists(terminal.options[Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM]))
+        for (Terminal::Options maze_option : maze_generators)
         {
-            titles.push_back("Breadth First Search Algorithm");
-            traversed.push_back(std::vector<Grid::ChangeRecord>());
-            path.push_back(BreadthFirstSearch<Grid>::search(grid, start, end, traversed.back()));
+            std::vector<Grid::ChangeRecord> maze_record;
+
+            DepthFirstSearchMazeGenerator depth_first_search_maze_generator;
+            BlockMazeGenerator            block_maze_generator;
+
+            switch (maze_option)
+            {
+            case Terminal::Options::DEPTH_FIRST_SEARCH_MAZE_GENERATOR:
+                depth_first_search_maze_generator.generate(grid, start, end, maze_record);
+                break;
+
+            case Terminal::Options::BLOCK_MAZE_GENERATOR:
+                block_maze_generator.generate(grid, start, end, maze_record);
+                break;
+
+            default:
+                continue;
+            }
+
+            std::vector<std::string>                     algorithm_indexes;
+            std::vector<std::vector<Grid::ChangeRecord>> traversed;
+            std::vector<std::vector<Grid::Location>>     path;
+
+            for (Terminal::Options algorithm_option : algorithms)
+            {
+                switch (algorithm_option)
+                {
+                case Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM:
+                    algorithm_indexes.push_back("Breadth First Search Algorithm");
+                    traversed.push_back(std::vector<Grid::ChangeRecord>());
+                    path.push_back(BreadthFirstSearch<Grid>::search(grid, start, end, traversed.back()));
+                    break;
+
+                case Terminal::Options::DIJKSTRA_ALGORITHM:
+                    algorithm_indexes.push_back("Dijkstra Algorithm");
+                    traversed.push_back(std::vector<Grid::ChangeRecord>());
+                    path.push_back(DijkstraSearch<Grid>::search(grid, start, end, traversed.back()));
+                    break;
+
+                case Terminal::Options::A_STAR_ALGORITHM:
+                    algorithm_indexes.push_back("A* Algorithm");
+                    traversed.push_back(std::vector<Grid::ChangeRecord>());
+                    path.push_back(AStarSearch<Grid>::search(grid, start, end, Grid::heuristic, traversed.back()));
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            renderer.createWindows(algorithm_indexes);
+
+            renderer.drawMazes(maze_record);
+            getch();
+
+            renderer.drawPath(is_parallel, algorithm_indexes, traversed, path);
+            getch();
         }
-
-        if (terminal.isOptionExists(terminal.options[Terminal::Options::DIJKSTRA_ALGORITHM]))
-        {
-            titles.push_back("Dijkstra Algorithm");
-            traversed.push_back(std::vector<Grid::ChangeRecord>());
-            path.push_back(DijkstraSearch<Grid>::search(grid, start, end, traversed.back()));
-        }
-
-        if (terminal.isOptionExists(terminal.options[Terminal::Options::A_STAR_ALGORITHM]))
-        {
-            titles.push_back("A* Algorithm");
-            traversed.push_back(std::vector<Grid::ChangeRecord>());
-            path.push_back(AStarSearch<Grid>::search(grid, start, end, Grid::heuristic, traversed.back()));
-        }
-
-        renderer.createWindows(titles);
-
-        renderer.drawMazes(maze_record);
-        getch();
-
-        renderer.drawPath(is_parallel, titles, traversed, path);
-        getch();
 
         return EXIT_SUCCESS;
     }
