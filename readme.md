@@ -4,9 +4,7 @@
 
 This project visually compares path finding algorithms in a maze.
 
-https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/9da0b87c-7bf3-495b-889a-c6ab98bdc6c7
-
-https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/4756e5e9-9237-438f-aa1f-66cf725434aa
+https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/64a4826c-2614-4cc3-bab8-a3c33bb00cdb
 
 This project is built with
 <img src="https://mesonbuild.com/assets/images/meson_logo.png" height="16px">
@@ -41,11 +39,11 @@ To see help message, add `-h` or `--help` flag
 ./pathfinder-comparison.exe -h
 ```
 
-![image](https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/d30b5d72-d7fa-4761-b7a9-56b878947ab8)
+![image](https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/b2401872-7daf-46bb-a805-1be3475a6fc3)
 
-To run a program you need to specify at least one of provided pathfinder algorithms (They are marked `[PATHFINDER]` in options list).
+To run a program you need to specify at least one of provided _pathfinder algorithms_ (They are marked as `[pathfinder]` in options list) and one of provided _maze generation algorithms_ (They are marked as `[maze generator]` in options list).
 Example command
 
 ```console
-./pathfinder-comparison -t 100 -d 0 -p --breadth-first-search --dijkstra --a-star
+.\pathfinder-comparison.exe -p -t 1 -d 0 --dijkstra --a-star --breadth-first-search --maze-block --maze-depth-first-search
 ```
