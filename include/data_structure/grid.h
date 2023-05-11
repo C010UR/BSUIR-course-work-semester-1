@@ -8,14 +8,16 @@
 #include <string>
 #include <vector>
 
-class Grid {
-   public:
+class Grid
+{
+  public:
     /** Type of cost of the cell */
     typedef unsigned cost_t;
 
     /** Position of each cell in a grid */
-    class Location {
-       public:
+    class Location
+    {
+      public:
         int x;
         int y;
 
@@ -25,18 +27,23 @@ class Grid {
     };
 
     /** Record of a change in a grid */
-    struct ChangeRecord {
-        Grid::Location location;
+    struct ChangeRecord
+    {
+        Grid::Location            location;
         std::chrono::microseconds time_taken;
-        size_t step = 0;  // used by GridRenderer
-        Grid::cost_t cost = 0;
+        size_t                    step = 0; // used by GridRenderer
+        Grid::cost_t              cost = 0;
     };
 
-    enum CellType { EMPTY, WALL };
+    enum CellType
+    {
+        EMPTY,
+        WALL
+    };
 
     static const std::array<Grid::Location, 4> directions;
 
-    size_t width, height;
+    size_t                                   width, height;
     std::vector<std::vector<Grid::CellType>> grid;
 
     /**
@@ -75,9 +82,9 @@ class Grid {
      * @param passable
      * @return std::vector<Grid::Location>
      */
-    std::vector<Grid::Location> neighbors(const Grid::Location &location,
-                                          const unsigned distance = 0,
-                                          const bool is_passable = true) const;
+    std::vector<Grid::Location> neighbors(
+        const Grid::Location &location, const unsigned distance = 0, const bool is_passable = true
+    ) const;
 
     /**
      * @brief Return cost of moving from cell `from` to cell `to`
@@ -95,24 +102,25 @@ class Grid {
      * @param to
      * @return Grid::cost_t
      */
-    static Grid::cost_t heuristic(const Grid::Location &from,
-                                  const Grid::Location &to);
+    static Grid::cost_t heuristic(const Grid::Location &from, const Grid::Location &to);
 
     Grid::CellType &operator[](const Grid::Location &location);
 };
 
-namespace std {
+namespace std
+{
 // Implement hash function so Grid::Location can be put into std::unordered_set
-template <>
-struct hash<Grid::Location> {
-    std::size_t operator()(const Grid::Location &location) const noexcept {
+template <> struct hash<Grid::Location>
+{
+    std::size_t operator()(const Grid::Location &location) const noexcept
+    {
         return std::hash<size_t>()(location.x ^ (location.y << 16));
     }
 };
 
 // Implement std::to_string function for Grid::Location
-inline std::string to_string(const Grid::Location &location) noexcept {
-    return "(" + std::to_string(location.x) + "; " +
-           std::to_string(location.y) + ")";
+inline std::string to_string(const Grid::Location &location) noexcept
+{
+    return "(" + std::to_string(location.x) + "; " + std::to_string(location.y) + ")";
 }
-}  // namespace std
+} // namespace std

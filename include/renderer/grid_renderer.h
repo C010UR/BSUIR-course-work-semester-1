@@ -13,22 +13,24 @@
 #include "data_structure/grid.h"
 #include "renderer/renderer.h"
 
-class GridRenderer : Renderer {
-   public:
-    static const size_t MIN_GRID_HEIGHT = 7;
-    static const size_t MIN_GRID_WIDTH = 41;
+class GridRenderer : Renderer
+{
+  public:
+    static const size_t MIN_GRID_HEIGHT  = 7;
+    static const size_t MIN_GRID_WIDTH   = 41;
     static const size_t MIN_STATUS_WIDTH = 38;
 
     /** Holds everything needed for grid window */
-    struct GridWindow {
+    struct GridWindow
+    {
         std::string title;
-        WINDOW *grid;
-        WINDOW *status;
+        WINDOW     *grid;
+        WINDOW     *status;
     };
 
-    size_t windows_amount;
-    size_t grid_height;
-    size_t grid_width;
+    size_t   windows_amount;
+    size_t   grid_height;
+    size_t   grid_width;
     unsigned traverse_delay;
     unsigned step_delay;
 
@@ -40,9 +42,7 @@ class GridRenderer : Renderer {
      * @param traverse_delay - delay for pathfinder path traversal
      * @param step_delay - any other delay
      */
-    GridRenderer(const size_t windows_amount,
-                 const unsigned traverse_delay = 40,
-                 const unsigned step_delay = 1);
+    GridRenderer(const size_t windows_amount, const unsigned traverse_delay = 40, const unsigned step_delay = 1);
 
     /**
      * @brief Create `GridRenderer::GridWindow` for each title
@@ -58,8 +58,7 @@ class GridRenderer : Renderer {
      * @param attribute
      * @param location
      */
-    static void updateGridCell(WINDOW *window, const attr_t attribute,
-                               const Grid::Location &location);
+    static void updateGridCell(WINDOW *window, const attr_t attribute, const Grid::Location &location);
 
     /**
      * @brief Find `GridRenderer::GridWindow` by title
@@ -86,12 +85,14 @@ class GridRenderer : Renderer {
      * @param traversed
      * @param path
      */
-    void drawPath(const bool is_parallel,
-                  const std::vector<std::string> &titles,
-                  const std::vector<std::vector<Grid::ChangeRecord>> &traversed,
-                  const std::vector<std::vector<Grid::Location>> &path);
+    void drawPath(
+        const bool                                          is_parallel,
+        const std::vector<std::string>                     &titles,
+        const std::vector<std::vector<Grid::ChangeRecord>> &traversed,
+        const std::vector<std::vector<Grid::Location>>     &path
+    );
 
-   private:
+  private:
     std::vector<GridWindow> windows;
 
     /**
@@ -102,9 +103,11 @@ class GridRenderer : Renderer {
      * @param traversed
      * @param path
      */
-    void drawPath(const GridRenderer::GridWindow &window,
-                  const std::vector<Grid::ChangeRecord> &traversed,
-                  const std::vector<Grid::Location> &path);
+    void drawPath(
+        const GridRenderer::GridWindow        &window,
+        const std::vector<Grid::ChangeRecord> &traversed,
+        const std::vector<Grid::Location>     &path
+    );
 
     /**
      * @brief Render a step in maze generation
@@ -114,10 +117,12 @@ class GridRenderer : Renderer {
      * @param information
      * @param previous
      */
-    void updateMaze(const bool is_end, const GridRenderer::GridWindow &window,
-                    const Grid::ChangeRecord &information,
-                    const std::optional<Grid::Location> &previous =
-                        std::optional<Grid::Location>());
+    void updateMaze(
+        const bool                           is_end,
+        const GridRenderer::GridWindow      &window,
+        const Grid::ChangeRecord            &information,
+        const std::optional<Grid::Location> &previous = std::optional<Grid::Location>()
+    );
 
     /**
      * @brief Render a step in path traversal
@@ -127,11 +132,12 @@ class GridRenderer : Renderer {
      * @param information
      * @param previous
      */
-    void updateTraversedPath(const bool is_end,
-                             const GridRenderer::GridWindow &window,
-                             const Grid::ChangeRecord &information,
-                             const std::optional<Grid::Location> &previous =
-                                 std::optional<Grid::Location>());
+    void updateTraversedPath(
+        const bool                           is_end,
+        const GridRenderer::GridWindow      &window,
+        const Grid::ChangeRecord            &information,
+        const std::optional<Grid::Location> &previous = std::optional<Grid::Location>()
+    );
 
     /**
      * @brief Render a step in path solution traversal
@@ -142,10 +148,11 @@ class GridRenderer : Renderer {
      * @param previous
      */
     void updateTraversedFinalPath(
-        const bool is_end, const GridRenderer::GridWindow &window,
-        const Grid::ChangeRecord &information,
-        const std::optional<Grid::Location> &previous =
-            std::optional<Grid::Location>());
+        const bool                           is_end,
+        const GridRenderer::GridWindow      &window,
+        const Grid::ChangeRecord            &information,
+        const std::optional<Grid::Location> &previous = std::optional<Grid::Location>()
+    );
 
     /**
      * @brief Render status for maze generation
@@ -154,8 +161,7 @@ class GridRenderer : Renderer {
      * @param top_text
      * @param information
      */
-    void mazeStatus(WINDOW *window, const std::string &top_text,
-                    const Grid::ChangeRecord &information);
+    void mazeStatus(WINDOW *window, const std::string &top_text, const Grid::ChangeRecord &information);
 
     /**
      * @brief Render status for path traversal
@@ -164,6 +170,5 @@ class GridRenderer : Renderer {
      * @param top_text
      * @param information
      */
-    void pathStatus(WINDOW *window, const std::string &top_text,
-                    const Grid::ChangeRecord &information);
+    void pathStatus(WINDOW *window, const std::string &top_text, const Grid::ChangeRecord &information);
 };

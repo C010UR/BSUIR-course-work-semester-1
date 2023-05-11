@@ -10,10 +10,12 @@
 #include "renderer/renderer.h"
 #include "utility/timer.h"
 
-class Renderer {
-   public:
+class Renderer
+{
+  public:
     /** Color types (initialized by `Renderer::validateAndStartColor`) */
-    enum ColorType {
+    enum ColorType
+    {
         TEXT,
         VALUE,
         WALL,
@@ -25,10 +27,11 @@ class Renderer {
         PATHFINDER_FINAL_TRAVERSED,
     };
 
-    struct ColorPair {
+    struct ColorPair
+    {
         Renderer::ColorType type;
-        int foreground;
-        int background;
+        int                 foreground;
+        int                 background;
     };
 
     static const std::vector<Renderer::ColorPair> color_pairs;
@@ -51,8 +54,7 @@ class Renderer {
      * @param min_width
      * @param min_height
      */
-    void validateTerminalResolution(const size_t min_width,
-                                    const size_t min_height);
+    void validateTerminalResolution(const size_t min_width, const size_t min_height);
 
     /**
      * @brief Validate if terminal supports colors and starts `ncurses` color
@@ -71,9 +73,13 @@ class Renderer {
      * @param title
      * @return WINDOW*
      */
-    static WINDOW *createWindow(const size_t height, const size_t width,
-                                const size_t start_x, const size_t start_y,
-                                const std::string &title = "");
+    static WINDOW *createWindow(
+        const size_t       height,
+        const size_t       width,
+        const size_t       start_x,
+        const size_t       start_y,
+        const std::string &title = ""
+    );
 
     /**
      * @brief Destroy `ncurses` windows and clears window on the screen
@@ -89,8 +95,7 @@ class Renderer {
      * @param attribute
      * @param character
      */
-    static void fillWindow(WINDOW *window, const int attribute,
-                           const char character);
+    static void fillWindow(WINDOW *window, const int attribute, const char character);
 
     /**
      * @brief Clear window excluding borders
@@ -109,9 +114,9 @@ class Renderer {
      * @param y
      * @param line
      */
-    static void attrMoveWindowPrint(WINDOW *window, const attr_t attribute,
-                                    const size_t x, const size_t y,
-                                    const std::string &line);
+    static void attrMoveWindowPrint(
+        WINDOW *window, const attr_t attribute, const size_t x, const size_t y, const std::string &line
+    );
 
     /**
      * @brief Print `line` with `attribute` in a window
@@ -120,8 +125,7 @@ class Renderer {
      * @param attribute
      * @param line
      */
-    static void attrWindowPrint(WINDOW *window, const attr_t attribute,
-                                const std::string &line);
+    static void attrWindowPrint(WINDOW *window, const attr_t attribute, const std::string &line);
 
     /**
      * @brief Move cursor and print `line` in a window
@@ -131,6 +135,5 @@ class Renderer {
      * @param y
      * @param line
      */
-    static void moveWindowPrint(WINDOW *window, const size_t x, const size_t y,
-                                const std::string &line);
+    static void moveWindowPrint(WINDOW *window, const size_t x, const size_t y, const std::string &line);
 };

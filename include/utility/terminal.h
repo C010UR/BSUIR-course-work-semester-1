@@ -8,18 +8,21 @@
 #include <string>
 #include <vector>
 
-class Terminal {
-   public:
-    struct Option {
+class Terminal
+{
+  public:
+    struct Option
+    {
         std::string short_cmd;
         std::string long_cmd;
-        bool is_value_required = false;
+        bool        is_value_required = false;
         std::string prefix;
         std::string default_value;
         std::string description;
     };
 
-    enum Options {
+    enum Options
+    {
         HELP,
         TRAVERSE_DELAY,
         STEP_DELAY,
@@ -30,7 +33,7 @@ class Terminal {
     };
 
     static const std::vector<Terminal::Option> options;
-    std::vector<std::string> arguments;
+    std::vector<std::string>                   arguments;
 
     /**
      * @brief Construct a new Cmd Options object and parses `argv`
@@ -73,8 +76,7 @@ class Terminal {
      * @param has_value
      * @return std::vector<std::string>::iterator
      */
-    std::vector<std::string>::iterator getOption(
-        std::string option, bool is_value_required = false);
+    std::vector<std::string>::iterator getOption(std::string option, bool is_value_required = false);
 
     /**
      * @brief Get option value if present, otherwise fail
@@ -84,31 +86,34 @@ class Terminal {
      * @param _default - if option was not specified
      * @return T
      */
-    template <typename T>
-    T getOptionValue(Terminal::Option option, T _default) {
-        if (!option.is_value_required || !this->isOptionExists(option)) {
+    template <typename T> T getOptionValue(Terminal::Option option, T _default)
+    {
+        if (!option.is_value_required || !this->isOptionExists(option))
+        {
             return _default;
         }
 
         auto value = this->getOption("-" + option.short_cmd, true);
 
-        if (value != this->arguments.end()) {
+        if (value != this->arguments.end())
+        {
             return Terminal::convertString<T>(*(value + 1));
         }
 
         value = this->getOption("--" + option.long_cmd, true);
 
-        if (value != this->arguments.end()) {
+        if (value != this->arguments.end())
+        {
             return Terminal::convertString<T>(*(value + 1));
         }
 
         throw std::invalid_argument(
-            "Argument error: Cannot get value for option '" + option.short_cmd +
-            (option.short_cmd.empty() && option.long_cmd.empty() ? "" : ", ") +
-            option.long_cmd + "'.");
+            "Argument error: Cannot get value for option '" + option.short_cmd
+            + (option.short_cmd.empty() && option.long_cmd.empty() ? "" : ", ") + option.long_cmd + "'."
+        );
     }
 
-   private:
+  private:
     /**
      * @brief Convert string to T
      *
@@ -116,21 +121,24 @@ class Terminal {
      * @param data
      * @return T
      */
-    template <typename T>
-    static T convertString(const std::string &data) {
-        if (!data.empty()) {
-            T result;
+    template <typename T> static T convertString(const std::string &data)
+    {
+        if (!data.empty())
+        {
+            T                  result;
             std::istringstream iss(data);
-            if (data.find("0x") != std::string::npos) {
+            if (data.find("0x") != std::string::npos)
+            {
                 iss >> std::hex >> result;
-            } else {
+            }
+            else
+            {
                 iss >> std::dec >> result;
             }
 
-            if (iss.fail()) {
-                throw std::invalid_argument(
-                    "Argument convert error: Cannot convert string '" + data +
-                    "' to value.");
+            if (iss.fail())
+            {
+                throw std::invalid_argument("Argument convert error: Cannot convert string '" + data + "' to value.");
                 return T();
             }
             return result;

@@ -7,10 +7,10 @@
 #include "algorithm/pathfinder/base_path_finder.h"
 #include "utility/timer.h"
 
-template <typename Graph>
-class BreadthFirstSearch : BasePathFinder<Graph> {
-   private:
-   public:
+template <typename Graph> class BreadthFirstSearch : BasePathFinder<Graph>
+{
+  private:
+  public:
     /**
      * @brief Search a path from `start` to `goal` in a graph
      *
@@ -25,31 +25,37 @@ class BreadthFirstSearch : BasePathFinder<Graph> {
      * @return std::vector<Location> - path from `start` to `goal`
      */
     static std::vector<typename Graph::Location> search(
-        const Graph &graph, const typename Graph::Location &start,
-        const typename Graph::Location &goal,
-        std::vector<typename Graph::ChangeRecord> &record) {
-        std::queue<typename Graph::Location> frontier;
-        std::unordered_map<typename Graph::Location, typename Graph::Location>
-            came_from;
+        const Graph                               &graph,
+        const typename Graph::Location            &start,
+        const typename Graph::Location            &goal,
+        std::vector<typename Graph::ChangeRecord> &record
+    )
+    {
+        std::queue<typename Graph::Location>                                   frontier;
+        std::unordered_map<typename Graph::Location, typename Graph::Location> came_from;
 
         frontier.push(start);
         came_from[start] = start;
 
         Timer timer;
 
-        while (!frontier.empty()) {
+        while (!frontier.empty())
+        {
             typename Graph::Location current = frontier.front();
             frontier.pop();
 
             timer.tock();
             record.push_back({current, timer.duration(), 0, 0});
 
-            if (current == goal) {
+            if (current == goal)
+            {
                 break;
             }
 
-            for (typename Graph::Location next : graph.neighbors(current)) {
-                if (came_from.find(next) == came_from.end()) {
+            for (typename Graph::Location next : graph.neighbors(current))
+            {
+                if (came_from.find(next) == came_from.end())
+                {
                     frontier.push(next);
                     came_from[next] = current;
                 }
