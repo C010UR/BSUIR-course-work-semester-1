@@ -1,6 +1,7 @@
 {
     "mesonbuild.configureOnOpen": true,
     "C_Cpp.default.compileCommands": "build\\vscode_compile_commands.json",
+    "editor.formatOnSave": true,
     "files.associations": {
         "*.vue": "vue",
         "cctype": "cpp",
