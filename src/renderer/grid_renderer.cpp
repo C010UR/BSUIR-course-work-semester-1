@@ -1,6 +1,13 @@
-#include <string>
-
 #include "renderer/grid_renderer.h"
+
+#include <ncurses.h>
+
+#include <mutex>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <vector>
 
 GridRenderer::GridRenderer(size_t windows_amount, unsigned traverse_delay, unsigned step_delay) : Renderer()
 {

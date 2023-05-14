@@ -1,5 +1,11 @@
 #include "data_structure/grid.h"
 
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <string>
+#include <vector>
+
 const std::array<Grid::Location, 4> Grid::directions = {
   // East, West, North, South
     Grid::Location{1,  0 },

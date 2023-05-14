@@ -1,5 +1,10 @@
 #include "algorithm/maze_generator/depth_first_search_maze_generator.h"
+
 #include <random>
+#include <stack>
+
+#include "data_structure/grid.h"
+#include "utility/timer.h"
 
 void DepthFirstSearchMazeGenerator::generate(
     Grid &grid, const Grid::Location &start, const Grid::Location &goal, std::vector<Grid::ChangeRecord> &record

@@ -1,10 +1,7 @@
 #pragma once
 
-#include <exception>
-#include <functional>
 #include <queue>
 #include <stdexcept>
-#include <utility>
 
 template <typename T, typename priority_t> class PriorityQueue
 {

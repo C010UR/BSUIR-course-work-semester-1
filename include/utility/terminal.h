@@ -1,7 +1,6 @@
 #pragma once
 
 #include <algorithm>
-#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -27,7 +26,6 @@ class Terminal
         TRAVERSE_DELAY,
         STEP_DELAY,
         PARALLEL,
-        BREADTH_FIRST_SEARCH_ALGORITHM,
         DIJKSTRA_ALGORITHM,
         A_STAR_ALGORITHM,
         DEPTH_FIRST_SEARCH_MAZE_GENERATOR,

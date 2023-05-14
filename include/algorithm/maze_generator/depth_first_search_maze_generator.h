@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include <stack>
 
 #include "algorithm/maze_generator/base_maze_generator.h"
