@@ -1,5 +1,8 @@
 #include "algorithm/maze_generator/base_maze_generator.h"
 
+#include <random>
+#include <stdexcept>
+
 void BaseMazeGenerator::validateArguments(const Grid &grid, const Grid::Location &start, const Grid::Location &goal)
 {
     if (grid.height <= BaseMazeGenerator::min_height || grid.width <= BaseMazeGenerator::min_width)

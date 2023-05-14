@@ -1,6 +1,12 @@
 #include "renderer/renderer.h"
 
-#include "ncurses.h"
+#include <ncurses.h>
+
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include "utility/timer.h"
 
 const std::vector<Renderer::ColorPair> Renderer::color_pairs = {
     {Renderer::ColorType::TEXT,                       COLOR_WHITE,  COLOR_BLACK},

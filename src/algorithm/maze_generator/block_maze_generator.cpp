@@ -1,7 +1,12 @@
 #include "algorithm/maze_generator/block_maze_generator.h"
+
+#include <chrono>
 #include <random>
 #include <stdexcept>
 #include <string>
+
+#include "data_structure/grid.h"
+#include "utility/timer.h"
 
 void BlockMazeGenerator::generate(
     Grid &grid, const Grid::Location &start, const Grid::Location &goal, std::vector<Grid::ChangeRecord> &record

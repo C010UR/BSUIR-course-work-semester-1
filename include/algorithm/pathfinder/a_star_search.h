@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <queue>
+#include <unordered_map>
 #include <vector>
 
 #include "algorithm/pathfinder/base_path_finder.h"
@@ -61,9 +61,9 @@ template <typename Graph> class AStarSearch : BasePathFinder<Graph>
                 if (cost_so_far.find(next) == cost_so_far.end() || new_cost < cost_so_far[next])
                 {
                     cost_so_far[next]               = new_cost;
+                    came_from[next]                 = current;
                     typename Graph::cost_t priority = new_cost + heuristic(next, goal);
                     frontier.push(next, priority);
-                    came_from[next] = current;
                 }
             }
         }

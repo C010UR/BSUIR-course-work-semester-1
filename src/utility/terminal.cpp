@@ -1,11 +1,17 @@
 #include "utility/terminal.h"
 
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 const std::vector<Terminal::Option> Terminal::options = {
     {"h", "help",                    false, "",               "",     "Show this help message"                  },
     {"t", "traverse-delay",          true,  "",               "40ms", "Set path traverse step (in milliseconds)"},
     {"d", "step-delay",              true,  "",               "1ms",  "Set step delay (in milliseconds)"        },
     {"p", "parallel",                false, "",               "",     "Toggle path parallel draw"               },
-    {"",  "breadth-first-search",    false, "pathfinder",     "",     "Breadth First Search Algorithm"          },
     {"",  "dijkstra",                false, "pathfinder",     "",     "Dijkstra Search Algorithm"               },
     {"",  "a-star",                  false, "pathfinder",     "",     "A* Search Algorithm"                     },
     {"",  "maze-depth-first-search", false, "maze generator", "",     "Depth First Search Maze Generator"       },

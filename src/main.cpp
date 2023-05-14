@@ -9,7 +9,6 @@
 #include "algorithm/maze_generator/block_maze_generator.h"
 #include "algorithm/maze_generator/depth_first_search_maze_generator.h"
 #include "algorithm/pathfinder/a_star_search.h"
-#include "algorithm/pathfinder/breadth_first_search.h"
 #include "algorithm/pathfinder/dijkstra_search.h"
 #include "data_structure/grid.h"
 #include "renderer/grid_renderer.h"
@@ -22,14 +21,13 @@ int main(int argc, char **argv)
     // global catch to edit exception error output
     try
     {
-        unsigned traverse_delay, step_delay;
+        // arguments
+        unsigned traverse_delay
+            = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::TRAVERSE_DELAY], 40);
+        unsigned step_delay  = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::STEP_DELAY], 1);
+        bool     is_parallel = terminal.isOptionExists(terminal.options[Terminal::Options::PARALLEL]);
 
-        // options
-        traverse_delay   = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::TRAVERSE_DELAY], 40);
-        step_delay       = terminal.getOptionValue<unsigned>(terminal.options[Terminal::Options::STEP_DELAY], 1);
-        bool is_parallel = terminal.isOptionExists(terminal.options[Terminal::Options::PARALLEL]);
-
-        auto addOption = [terminal](std::vector<Terminal::Options> &vec, Terminal::Options opt) {
+        auto addArgument = [terminal](std::vector<Terminal::Options> &vec, Terminal::Options opt) {
             if (terminal.isOptionExists(terminal.options[opt]))
             {
                 vec.push_back(opt);
@@ -38,9 +36,8 @@ int main(int argc, char **argv)
 
         std::vector<Terminal::Options> algorithms;
 
-        addOption(algorithms, Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM);
-        addOption(algorithms, Terminal::Options::DIJKSTRA_ALGORITHM);
-        addOption(algorithms, Terminal::Options::A_STAR_ALGORITHM);
+        addArgument(algorithms, Terminal::Options::DIJKSTRA_ALGORITHM);
+        addArgument(algorithms, Terminal::Options::A_STAR_ALGORITHM);
 
         if (algorithms.empty())
         {
@@ -51,8 +48,8 @@ int main(int argc, char **argv)
 
         std::vector<Terminal::Options> maze_generators;
 
-        addOption(maze_generators, Terminal::Options::DEPTH_FIRST_SEARCH_MAZE_GENERATOR);
-        addOption(maze_generators, Terminal::Options::BLOCK_MAZE_GENERATOR);
+        addArgument(maze_generators, Terminal::Options::DEPTH_FIRST_SEARCH_MAZE_GENERATOR);
+        addArgument(maze_generators, Terminal::Options::BLOCK_MAZE_GENERATOR);
 
         if (maze_generators.empty())
         {
@@ -99,12 +96,6 @@ int main(int argc, char **argv)
             {
                 switch (algorithm_option)
                 {
-                case Terminal::Options::BREADTH_FIRST_SEARCH_ALGORITHM:
-                    algorithm_indexes.push_back("Breadth First Search Algorithm");
-                    traversed.push_back(std::vector<Grid::ChangeRecord>());
-                    path.push_back(BreadthFirstSearch<Grid>::search(grid, start, end, traversed.back()));
-                    break;
-
                 case Terminal::Options::DIJKSTRA_ALGORITHM:
                     algorithm_indexes.push_back("Dijkstra Algorithm");
                     traversed.push_back(std::vector<Grid::ChangeRecord>());

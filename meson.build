@@ -1,5 +1,5 @@
-project('BSUIR-course-work-semester-1', 'cpp',
-  version : '0.1',
+project('Pathfinder comparison', 'cpp',
+  version : '1',
   default_options : [
     'warning_level=3',
     'cpp_std=c++17'
@@ -47,5 +47,3 @@ exe = executable('pathfinder-comparison',
   install_dir : './bin',
   dependencies : curses
 )
-
-test('basic', exe)

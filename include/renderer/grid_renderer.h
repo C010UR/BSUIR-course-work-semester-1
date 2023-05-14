@@ -2,13 +2,11 @@
 
 #include <ncurses.h>
 
-#include <chrono>
 #include <mutex>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <thread>
-#include <unordered_map>
 #include <vector>
 
 #include "data_structure/grid.h"

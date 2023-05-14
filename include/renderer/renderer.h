@@ -2,12 +2,10 @@
 
 #include <ncurses.h>
 
-#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-#include "renderer/renderer.h"
 #include "utility/timer.h"
 
 class Renderer
