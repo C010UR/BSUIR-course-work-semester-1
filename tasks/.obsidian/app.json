@@ -1,0 +1,13 @@
+{
+  "useTab": false,
+  "vimMode": false,
+  "livePreview": true,
+  "showFrontmatter": false,
+  "showLineNumber": true,
+  "spellcheck": true,
+  "spellcheckLanguages": [
+    "en-US",
+    "ru"
+  ],
+  "promptDelete": false
+}

@@ -1,0 +1,31 @@
+/*https://forum.obsidian.md/t/a-frontmatter-that-finally-supports-links-lilas-frontmatter/53087*/
+div.meta {
+  display: inline-block;
+  font-family: monospace;
+  background-color: var(--background-secondary);
+  box-shadow: -1px -1px 8px var(--color-base-30);
+  border-radius: 15px;
+  padding: 15px 18px 15px 15px;
+  transition: opacity 300ms linear;
+  opacity: 0.6;
+  margin-bottom: 15px;
+}
+
+div.meta:hover {
+  opacity: 1;
+}
+
+div.meta::before {
+  content: "Metadata";
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  padding-bottom: 4px;
+  font-size: 16px;
+}
+
+div.meta ul {
+  margin: 0;
+  padding-left: 28px;
+}

@@ -1,0 +1,235 @@
+{
+  "main": {
+    "id": "49cc9ab631db1e1b",
+    "type": "split",
+    "children": [
+      {
+        "id": "eeee6f2db1369b22",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c6365516a851a8ae",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "TUI.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "13bfdb77c5511940",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {}
+            }
+          },
+          {
+            "id": "e151d97833770bd6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Pathfinder.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "b606d714b7204d85",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Program.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "53c2d242cb5f2914",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Maze generator.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "47c94293c6a9422b",
+    "type": "split",
+    "children": [
+      {
+        "id": "f31ba542362c6d91",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1fba0a05221962c0",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "51d20d82330d065d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "a1030d36c737c944",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "82c3378bdf4f5531",
+    "type": "split",
+    "children": [
+      {
+        "id": "5b9b299a9564b7bc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d07024e45a97fbc0",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Maze generator.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "273434ab1b3d2916",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Maze generator.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "d4594ff49500d844",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "c03a602c7775088c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Maze generator.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "templater-obsidian:Templater": false,
+      "omnisearch:Omnisearch": false
+    }
+  },
+  "active": "53c2d242cb5f2914",
+  "lastOpenFiles": [
+    "Pathfinder.md",
+    "Maze generator.md",
+    "Program.md",
+    "Untitled.canvas",
+    "Arguments.md",
+    "TUI.md",
+    "Argument UI.md",
+    "templates/Universal Template.md",
+    "templates/Links.md",
+    "templates/Temporal/Now.md",
+    "templates/Temporal/Today.md",
+    "templates/Temporal/Time.md",
+    "templates/Temporal/Now old.md",
+    "templates/Temporal/Date.md",
+    "templates/Temporal",
+    "templates/Review/Weekly Review.md",
+    "templates/Review/Monthly review.md",
+    "templates/Review",
+    "templates/old/Website Template.md",
+    "templates/old/Thought Template.md",
+    "templates/old/Task Template.md",
+    "templates/old/Software Template.md",
+    "templates/old/Font Template.md",
+    "templates/old/Note Template.md",
+    "templates/old/Book Template.md",
+    "templates/old",
+    "templates/Markdown/link.md",
+    "templates/Markdown/strikestrough.md",
+    "templates/Markdown",
+    "templates/Code/code.md",
+    "templates/Code",
+    "templates",
+    "New folder",
+    "Path finder",
+    "Maze generator",
+    "Renderer"
+  ]
+}
