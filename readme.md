@@ -19,7 +19,7 @@ This project is built with
 To compile the project, first you need to build it using
 
 ```console
-meson build
+meson init {{ build directory }}
 ```
 
 If you want to build for relase, add `--buildtype=release` flag.<br>
