@@ -19,7 +19,7 @@ This project is built with
 To compile the project, first you need to build it using
 
 ```console
-meson init {{ build directory }}
+meson setup {{ build directory }}
 ```
 
 If you want to build for relase, add `--buildtype=release` flag.<br>
@@ -36,7 +36,7 @@ After compilation a program will be stored in `build` directory
 To see help message, add `-h` or `--help` flag
 
 ```console
-./pathfinder-comparison.exe -h
+./build/pathfinder-comparison.exe -h
 ```
 
 ![image](https://github.com/C010UR/ncurses-maze-comparison/assets/95462776/b2401872-7daf-46bb-a805-1be3475a6fc3)
